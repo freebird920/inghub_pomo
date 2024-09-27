@@ -23,7 +23,7 @@ void openThemeColorSeedPicker({
           );
         }
       } catch (e) {
-        openCompSnackBar(context: context, message: e.toString());
+        openCompSnackBar(message: e.toString());
       }
     },
   );
