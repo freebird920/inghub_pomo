@@ -9,9 +9,15 @@ class RootLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<PreferenceProvider>(
       builder: (context, preferenceProvider, _) {
+        final bool darkTheme =
+            preferenceProvider.getPrefBool("theme_dark_mode") ?? false;
         return MaterialApp.router(
           theme: ThemeData(
-            colorSchemeSeed: Colors.blue,
+            fontFamily: "NotoSansKR",
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.purple,
+              brightness: darkTheme ? Brightness.dark : Brightness.light,
+            ),
           ),
           routerConfig: ingHubRouter,
         );

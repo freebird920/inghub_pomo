@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:inghub_pomo/classes/result_class.dart';
 import 'package:inghub_pomo/components/comp_navbar.dart';
 import 'package:inghub_pomo/components/comp_snack_bar.dart';
 import 'package:inghub_pomo/providers/preference_provider.dart';
@@ -31,13 +32,31 @@ class ListTileDarkMode extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final PreferenceProvider preferenceProvider =
-        Provider.of<PreferenceProvider>(context, listen: false);
+        Provider.of<PreferenceProvider>(context);
+    final bool isDark =
+        preferenceProvider.getPrefBool("theme_dark_mode") ?? false;
+
+    void openDarkModeSnackBar(String msg) {
+      openCompSnackBar(context: context, message: msg);
+    }
+
     return ListTile(
-      title: const Text("DarkMode"),
-      subtitle: const Text("Set DarkMode"),
-      onTap: () {
-        preferenceProvider.setPrefBool(key: "theme_dark_mode", value: true);
-        openCompSnackBar(context: context, message: "DarkMode Set");
+      leading:
+          isDark ? const Icon(Icons.light_mode) : const Icon(Icons.dark_mode),
+      title: const Text("ThemeMode"),
+      subtitle: Text(
+          "Current: ${isDark ? "Dark" : "Light"}  Target: ${isDark ? "Light" : "Dark"}"),
+      onTap: () async {
+        final Result<bool> result = await preferenceProvider.setPrefBool(
+            key: "theme_dark_mode", value: !isDark);
+        if (result.isError) {
+          openDarkModeSnackBar(result.error.toString());
+          return;
+        }
+        if (result.isSuccess && result.data == true) {
+          openDarkModeSnackBar(
+              isDark ? "LightMode engaged" : "DarkMode engaged");
+        }
       },
     );
   }
