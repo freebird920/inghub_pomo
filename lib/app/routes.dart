@@ -16,6 +16,12 @@ final List<IngRoute> ingRoutes = [
     pathName: "설정",
     builder: (context, state) => const SettingsPage(),
     icon: const Icon(Icons.settings),
+    routes: <RouteBase>[
+      GoRoute(
+        path: "profiles",
+        builder: (context, state) => const SettingsPage(),
+      )
+    ],
   ),
   IngRoute(
     path: "/settings2",
@@ -30,6 +36,7 @@ final List<RouteBase> _routes = ingRoutes
       (element) => GoRoute(
         path: element.path,
         builder: element.builder,
+        routes: element.routes ?? [],
       ),
     )
     .toList();

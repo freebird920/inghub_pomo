@@ -29,12 +29,17 @@ class ListTileDarkMode extends StatelessWidget {
         final Result<bool> result = await preferenceProvider.setPrefBool(
             key: "theme_dark_mode", value: !isDark);
         if (result.isError) {
-          openCompSnackBar(message: result.error.toString());
+          openCompSnackBar(
+            message: result.error.toString(),
+            duration: const Duration(milliseconds: 500),
+          );
           return;
         }
         if (result.isSuccess && result.data == true) {
           openCompSnackBar(
-              message: isDark ? "LightMode engaged" : "DarkMode engaged");
+            message: isDark ? "LightMode engaged" : "DarkMode engaged",
+            duration: const Duration(milliseconds: 500),
+          );
         }
       },
     );

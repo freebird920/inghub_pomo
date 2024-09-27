@@ -6,10 +6,12 @@ class IngRoute {
   final String? pathName;
   final Widget Function(BuildContext, GoRouterState)? builder;
   final Icon icon;
+  final List<RouteBase>? routes;
   const IngRoute({
     required this.path,
-    this.pathName,
     required this.builder,
     required this.icon,
+    this.pathName,
+    this.routes,
   });
 }

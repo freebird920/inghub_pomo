@@ -26,6 +26,7 @@ class RootLayout extends StatelessWidget {
         return Builder(
           builder: (context) {
             return MaterialApp.router(
+              debugShowCheckedModeBanner: false,
               scaffoldMessengerKey: scaffoldMessengerKey,
               theme: ThemeData(
                 fontFamily: "NotoSansKR",
