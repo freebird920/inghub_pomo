@@ -15,7 +15,7 @@ class _CompNavbarState extends State<CompNavbar> {
   void initState() {
     super.initState();
     final uri = GoRouter.of(context).routeInformationProvider.value.uri;
-    _currentUri = uri;
+    _currentUri = GoRouter.of(context).routeInformationProvider.value.uri;
     final myUriSplit = uri.toString().split("/");
     final myUri = Uri.parse("/${myUriSplit[1]}");
     switch (myUri.toString()) {

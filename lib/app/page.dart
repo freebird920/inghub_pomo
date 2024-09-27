@@ -8,7 +8,8 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("HomePage"),
+        title: const Text("홈페이지"),
+        centerTitle: true,
       ),
       bottomNavigationBar: const CompNavbar(),
     );
