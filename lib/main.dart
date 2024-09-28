@@ -1,6 +1,5 @@
 // import packages
 import 'package:flutter/material.dart';
-import 'package:inghub_pomo/providers/isolate_provider.dart';
 import 'package:provider/provider.dart';
 
 // project providers
@@ -14,7 +13,6 @@ import 'package:inghub_pomo/app/layout.dart';
 void main() async {
   runApp(MultiProvider(
     providers: [
-      ChangeNotifierProvider(create: (_) => IsolateProvider()),
       ChangeNotifierProvider(create: (_) => PreferenceProvider()),
       ChangeNotifierProvider(create: (_) => FileProvider()),
     ],

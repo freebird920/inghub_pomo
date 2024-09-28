@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:inghub_pomo/app/page.dart';
 import 'package:inghub_pomo/app/settings/page.dart';
+import 'package:inghub_pomo/app/settings/set_profiles/page.dart';
 import 'package:inghub_pomo/app/utils/keys.dart';
 import 'package:inghub_pomo/classes/ing_route_class.dart';
 
@@ -19,8 +20,8 @@ final List<IngRoute> ingRoutes = [
     icon: const Icon(Icons.settings),
     routes: <RouteBase>[
       GoRoute(
-        path: "profiles",
-        builder: (context, state) => const SettingsPage(),
+        path: "set_profiles",
+        builder: (context, state) => const SetProfilesPage(),
       )
     ],
   ),

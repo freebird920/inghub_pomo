@@ -7,7 +7,7 @@ import 'package:inghub_pomo/classes/result_class.dart';
 import 'package:inghub_pomo/services/file_service.dart';
 import 'package:inghub_pomo/services/isolate_file_service.dart';
 
-class IsolateProvider with ChangeNotifier {
+class IsolateFileProvider with ChangeNotifier {
   final IsolateFileService _isolateService = IsolateFileService();
   final FileService _fileService = FileService();
   String get _localSaperator => Platform.pathSeparator;
@@ -17,7 +17,7 @@ class IsolateProvider with ChangeNotifier {
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
-  IsolateProvider() {
+  IsolateFileProvider() {
     _initialize();
   }
 

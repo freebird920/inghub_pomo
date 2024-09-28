@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:inghub_pomo/components/comp_modal_color_picker.dart';
 import 'package:inghub_pomo/providers/preference_provider.dart';
+import 'package:inghub_pomo/managers/dialog_manager.dart';
 import 'package:provider/provider.dart';
 
 class ListTileColorPicker extends StatefulWidget {
@@ -41,7 +42,7 @@ class _ListTileColorPickerState extends State<ListTileColorPicker> {
       ),
       subtitle: const Text("Change the theme color"),
       onTap: () {
-        openThemeColorSeedPicker();
+        DialogManager().showAlertDialog(const CompModalColorPicker());
       },
     );
   }

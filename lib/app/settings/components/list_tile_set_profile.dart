@@ -13,7 +13,7 @@ class ListTileSetProfile extends StatelessWidget {
       title: const Text("Profile"),
       subtitle: const Text("프로필 설정 합니다."),
       onTap: () {
-        GoRouter.of(context).push("/settings/profiles");
+        GoRouter.of(context).push("/settings/set_profiles");
       },
     );
   }

@@ -37,4 +37,23 @@ class FileService {
       );
     }
   }
+
+  Future<Result<String>> readJsonFile({
+    required String fileName,
+    required String directoryPath,
+  }) async {
+    try {
+      final file = File("$directoryPath$_localSaperator$fileName");
+
+      if (!(await file.exists())) {
+        throw Exception("File not found");
+      }
+
+      final data = await file.readAsString();
+
+      return Result(data: data);
+    } catch (e) {
+      return Result(error: e is Exception ? e : Exception(e.toString()));
+    }
+  }
 }

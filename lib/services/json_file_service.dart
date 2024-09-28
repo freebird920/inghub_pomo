@@ -10,9 +10,9 @@ class JsonFileService {
 
   // 3. 외부에서 접근할 수 있는 인스턴스 제공자
   factory JsonFileService() {
+    JsonFileService()._initialize();
     return _instance;
   }
-
   // _isLoading 변수 설정
   bool _isLoading = false;
   bool get isLoading => _isLoading;
