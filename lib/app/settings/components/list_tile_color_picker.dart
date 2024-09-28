@@ -41,7 +41,7 @@ class _ListTileColorPickerState extends State<ListTileColorPicker> {
       ),
       subtitle: const Text("Change the theme color"),
       onTap: () {
-        openThemeColorSeedPicker(context: context);
+        openThemeColorSeedPicker();
       },
     );
   }

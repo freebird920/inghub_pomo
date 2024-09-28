@@ -1,5 +1,6 @@
 // import material
 import 'package:flutter/material.dart';
+import 'package:inghub_pomo/components/comp_alert_dialog.dart';
 
 // import components
 import 'package:inghub_pomo/components/comp_navbar.dart';
@@ -22,11 +23,22 @@ class SettingsPage extends StatelessWidget {
       ),
       body: Center(
         child: ListView(
-          children: const [
-            ListTileSetProfile(),
-            ListTileDarkMode(),
-            ListTileColorPicker(),
-            ListTileUpdateCheck(),
+          children: [
+            const ListTileSetProfile(),
+            const ListTileDarkMode(),
+            const ListTileColorPicker(),
+            const ListTileUpdateCheck(),
+            ListTile(
+              leading: const Icon(Icons.info),
+              title: const Text("About"),
+              subtitle: const Text("About this app"),
+              onTap: () {
+                openAlertDialog(
+                  title: const Text("About"),
+                  content: const Text("This is a simple app"),
+                );
+              },
+            ),
           ],
         ),
       ),

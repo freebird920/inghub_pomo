@@ -1,6 +1,7 @@
 // lib/screens/home_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:inghub_pomo/components/comp_navbar.dart';
 import 'package:provider/provider.dart';
 import '../providers/isolate_provider.dart';
 import '../classes/result_class.dart';
@@ -16,6 +17,7 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Isolate and FileService Example'),
       ),
+      bottomNavigationBar: const CompNavbar(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

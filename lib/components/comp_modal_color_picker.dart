@@ -5,9 +5,12 @@ import 'package:inghub_pomo/components/comp_snack_bar.dart';
 import 'package:inghub_pomo/providers/preference_provider.dart';
 import 'package:provider/provider.dart';
 
-void openThemeColorSeedPicker({
-  required BuildContext context,
-}) {
+void openThemeColorSeedPicker() {
+  final BuildContext? context = navigatorKey.currentContext;
+  if (context == null) {
+    openCompSnackBar(message: "context is null");
+    return;
+  }
   WidgetsBinding.instance.addPostFrameCallback(
     (_) {
       try {
