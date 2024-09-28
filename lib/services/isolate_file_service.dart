@@ -1,16 +1,24 @@
+// lib/services/isolate_file_service.dart
+
 import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:inghub_pomo/classes/isolate_message_class.dart';
 import 'package:inghub_pomo/classes/result_class.dart';
+import 'package:path_provider/path_provider.dart';
+// lib/models/response_message.dart
 
-class IsolateService {
+class IsolateFileService {
   // 싱글톤 인스턴스
-  IsolateService._internal();
-  static final IsolateService _instance = IsolateService._internal();
+  IsolateFileService._internal();
+  static final IsolateFileService _instance = IsolateFileService._internal();
+
+  // _localSeparator 변수 설정
+  String get _localSeparator => Platform.pathSeparator;
 
   // 외부에서 접근할 수 있는 팩토리 생성자
-  factory IsolateService() {
+  factory IsolateFileService() {
     return _instance;
   }
 
@@ -36,11 +44,26 @@ class IsolateService {
   // Completer for initialization
   final Completer<void> _initCompleter = Completer<void>();
 
+  String? _localDirPath;
+  String? get localDirPath => _localDirPath;
+
   // 초기화 메서드
   Future<void> initialize() async {
     if (_isInitialized) return;
 
     try {
+      // 애플리케이션 디렉터리 경로 가져오기
+      final localPathResult = await getLocalPath();
+      if (localPathResult.isError) {
+        throw localPathResult.error!;
+      }
+      if (localPathResult.isNull) {
+        throw Exception('Local path is null');
+      }
+      if (localPathResult.isSuccess) {
+        _localDirPath = localPathResult.successData;
+      }
+
       // Isolate 생성
       _isolateFileService = await Isolate.spawn(
           _isolateFunction, _receivePortFileService.sendPort);
@@ -68,22 +91,50 @@ class IsolateService {
       // 기다리기
       await _initCompleter.future;
     } catch (e) {
-      print('Initialization Error: $e');
       await shutdown();
       rethrow;
+    }
+  }
+
+  // 애플리케이션 디렉터리 경로 가져오기
+  Future<Result<String>> getLocalPath() async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+
+      // inghub_pomo 폴더 경로 설정
+      final customDirPath = "${directory.path}${_localSeparator}inghub_pomo";
+      // 디렉터리가 없으면 생성
+      final customDir = Directory(customDirPath);
+      if (!(await customDir.exists())) {
+        await customDir.create(recursive: true); // 하위 폴더까지 생성
+      }
+      return Result(data: customDirPath);
+    } catch (e) {
+      return Result(
+        error: e is Exception ? e : Exception(e.toString()),
+      );
     }
   }
 
   // 메시지 핸들링 메서드
   void _handleMessage(dynamic message) {
     if (message is Map<String, dynamic>) {
-      int id = message['id'];
-      if (_completers.containsKey(id)) {
-        if (message['error'] != null) {
-          _completers[id]!.completeError(Exception(message['error']));
-        } else {
-          _completers[id]!.complete(message['result']);
+      final response = ResponseMessage.fromMap(message);
+      final int id = response.id;
+      try {
+        if (_completers.containsKey(id)) {
+          if (response.error != null) {
+            _completers[id]!.completeError(Exception(response.error));
+          } else {
+            _completers[id]!.complete(response.result);
+          }
         }
+      } catch (e, stackTrace) {
+        // 예외 로깅
+
+        print('Error completing completer for id $id: $e');
+        print(stackTrace);
+      } finally {
         _completers.remove(id);
       }
     }
@@ -99,23 +150,29 @@ class IsolateService {
     final Completer<R> completer = Completer<R>();
     _completers[id] = completer;
 
-    // Isolate로 작업 요청 전송
-    _sendPortFileService!.send({
-      'id': id,
-      'operation': operation,
-      'data': data,
-    });
+    // 요청 메시지 생성
+    final request = RequestMessage(
+      id: id,
+      operation: operation,
+      data: data,
+    );
+
+    // Isolate로 작업 요청 전송 (Map으로 변환)
+    _sendPortFileService!.send(request.toMap());
 
     // 타임아웃 설정 (예: 10초)
-    return completer.future.timeout(const Duration(seconds: 10), onTimeout: () {
-      if (_completers.containsKey(id)) {
-        _completers[id]!.completeError(
-          TimeoutException('Request $id timed out'),
-        );
-        _completers.remove(id);
-      }
-      throw TimeoutException('Request $id timed out');
-    });
+    return completer.future.timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        if (_completers.containsKey(id)) {
+          _completers[id]!.completeError(
+            TimeoutException('Request $id timed out'),
+          );
+          _completers.remove(id);
+        }
+        throw TimeoutException('Request $id timed out');
+      },
+    );
   }
 
   /// 파일 읽기 메서드
@@ -162,29 +219,15 @@ class IsolateService {
     // 메시지 수신 대기
     isolateReceivePort.listen((message) async {
       if (message is Map<String, dynamic>) {
-        final int id = message['id'];
-        final String operation = message['operation'];
-        final dynamic data = message['data'];
+        final request = RequestMessage.fromMap(message);
+        final int id = request.id;
+        final String operation = request.operation;
+        final dynamic data = request.data;
         dynamic result;
         String? error;
 
         try {
           switch (operation) {
-            case 'toUpperCase':
-              if (data is String) {
-                result = data.toUpperCase();
-              } else {
-                throw Exception(
-                    'Data must be a String for toUpperCase operation');
-              }
-              break;
-            case 'reverse':
-              if (data is String) {
-                result = data.split('').reversed.join('');
-              } else {
-                throw Exception('Data must be a String for reverse operation');
-              }
-              break;
             case 'readFile':
               if (data is String) {
                 // data는 파일 경로
@@ -218,12 +261,15 @@ class IsolateService {
           error = e.toString();
         }
 
+        // 응답 메시지 생성
+        final response = ResponseMessage(
+          id: id,
+          result: result,
+          error: error,
+        );
+
         // 결과 전송
-        mainSendPort.send({
-          'id': id,
-          'result': result,
-          'error': error,
-        });
+        mainSendPort.send(response.toMap());
       }
     });
   }

@@ -3,12 +3,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import '../services/isolate_service.dart';
-import '../services/file_service.dart';
-import '../classes/result_class.dart';
+import 'package:inghub_pomo/classes/result_class.dart';
+import 'package:inghub_pomo/services/file_service.dart';
+import 'package:inghub_pomo/services/isolate_file_service.dart';
 
 class IsolateProvider with ChangeNotifier {
-  final IsolateService _isolateService = IsolateService();
+  final IsolateFileService _isolateService = IsolateFileService();
   final FileService _fileService = FileService();
   String get _localSaperator => Platform.pathSeparator;
   bool _isLoading = false;
@@ -28,7 +28,6 @@ class IsolateProvider with ChangeNotifier {
     // FileService를 통해 디렉토리 경로 가져오기
     Result<String> pathResult = await _fileService.localPath;
     if (pathResult.isSuccess) {
-      String directoryPath = pathResult.data!;
       try {
         await _isolateService.initialize();
         _errorMessage = null;
@@ -48,8 +47,8 @@ class IsolateProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      String directoryPath = (await _fileService.localPath).data!;
-      String filePath = '$directoryPath${_localSaperator}test.json';
+      String filePath =
+          '${_isolateService.localDirPath}${_localSaperator}test.json';
       String content = '{"name": "test"}';
       String result =
           (await _isolateService.writeFile(filePath, content)).successData;

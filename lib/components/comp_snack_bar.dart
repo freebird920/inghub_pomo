@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:inghub_pomo/app/layout.dart';
+import 'package:inghub_pomo/app/utils/keys.dart';
 
 void openCompSnackBar({required String message, Duration? duration}) {
   scaffoldMessengerKey.currentState?.hideCurrentSnackBar();

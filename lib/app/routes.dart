@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:inghub_pomo/app/page.dart';
 import 'package:inghub_pomo/app/settings/page.dart';
+import 'package:inghub_pomo/app/utils/keys.dart';
 import 'package:inghub_pomo/classes/ing_route_class.dart';
 
 final List<IngRoute> ingRoutes = [
@@ -41,4 +42,7 @@ final List<RouteBase> _routes = ingRoutes
     )
     .toList();
 
-final GoRouter ingHubRouter = GoRouter(routes: _routes);
+final GoRouter ingHubRouter = GoRouter(
+  routes: _routes,
+  navigatorKey: navigatorKey,
+);

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:inghub_pomo/app/routes.dart';
+import 'package:inghub_pomo/app/utils/keys.dart';
 import 'package:inghub_pomo/providers/preference_provider.dart';
 import 'package:provider/provider.dart';
-
-final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
-    GlobalKey<ScaffoldMessengerState>();
 
 class RootLayout extends StatelessWidget {
   const RootLayout({super.key});
