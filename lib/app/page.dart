@@ -10,13 +10,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final SqliteService helper = SqliteService();
+  final SqliteService sqliteService = SqliteService();
 
   @override
   void initState() {
     super.initState();
     WidgetsFlutterBinding.ensureInitialized();
-    helper.initWinDB();
+    sqliteService.initDB();
   }
 
   @override
@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
           leading: TextButton(
             onPressed: () async {
-              await helper.batchInsert();
+              await sqliteService.batchInsert();
               setState(() {});
             },
             child: const Text("ADD"),
@@ -33,14 +33,14 @@ class _HomePageState extends State<HomePage> {
           actions: [
             TextButton(
               onPressed: () async {
-                await helper.deleteAllUsers();
+                await sqliteService.deleteAllUsers();
                 setState(() {});
               },
               child: const Text("DEL"),
             ),
           ]),
       body: FutureBuilder<List<User>>(
-        future: helper.getAllUsers(),
+        future: sqliteService.getAllUsers(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());

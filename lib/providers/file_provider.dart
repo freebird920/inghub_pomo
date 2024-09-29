@@ -27,7 +27,7 @@ class FileProvider with ChangeNotifier {
   void _init() async {
     if (_isLoading || _isInit) return;
     _isLoading = true;
-    final localPath = await _fileService.localPath;
+    final localPath = await _fileService.getLocalPath;
     if (localPath.isSuccess && localPath.data != null) {
       _localPath = localPath.successData;
     } else {

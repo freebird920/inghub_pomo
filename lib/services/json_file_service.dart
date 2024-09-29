@@ -29,7 +29,7 @@ class JsonFileService {
     // 초기화 코드 작성
     _isLoading = true;
     // 파일 경로 가져오기
-    final localPath = await _fileService.localPath;
+    final localPath = await _fileService.getLocalPath;
     if (localPath.isSuccess && localPath.data != null) {
       _localPath = localPath.successData;
     } else {

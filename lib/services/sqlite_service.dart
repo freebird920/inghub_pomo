@@ -1,58 +1,41 @@
-import 'dart:io';
 import 'dart:math';
 import 'package:inghub_pomo/classes/user_class.dart';
+import 'package:inghub_pomo/services/file_service.dart';
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class SqliteService {
+  SqliteService._internal();
+  static final SqliteService _instance = SqliteService._internal();
+  factory SqliteService() => _instance;
+
   Database? _database;
 
   Future<Database> get database async {
     if (_database != null) {
       return _database!;
     }
-    _database = await initWinDB();
+    _database = await initDB();
     return _database!;
   }
 
-  Future<Database> initWinDB() async {
+  Future<Database> initDB() async {
     sqfliteFfiInit();
     final databaseFactory = databaseFactoryFfi;
-    return await databaseFactory.openDatabase(
-      inMemoryDatabasePath,
+    FileService fileService = FileService();
+    final localPathResult = await fileService.getLocalPath;
+    if (localPathResult.error != null) {
+      throw Exception(localPathResult.error);
+    }
+    final dbPath = join(localPathResult.successData, "data.db");
+    final database = await databaseFactory.openDatabase(
+      dbPath,
       options: OpenDatabaseOptions(
-        onCreate: _onCreate,
         version: 1,
+        onCreate: _onCreate,
       ),
     );
-  }
-
-  Future<Database> initDB() async {
-    if (Platform.isWindows || Platform.isLinux) {
-      sqfliteFfiInit();
-      final databaseFactory = databaseFactoryFfi;
-      final appDocumentsDir = await getApplicationDocumentsDirectory();
-      final dbPath = join(appDocumentsDir.path, "databases", "data.db");
-      final winLinuxDB = await databaseFactory.openDatabase(
-        dbPath,
-        options: OpenDatabaseOptions(
-          version: 1,
-          onCreate: _onCreate,
-        ),
-      );
-      return winLinuxDB;
-    } else if (Platform.isAndroid || Platform.isIOS) {
-      final documentsDirectory = await getApplicationDocumentsDirectory();
-      final path = join(documentsDirectory.path, "data.db");
-      final iOSAndroidDB = await openDatabase(
-        path,
-        version: 1,
-        onCreate: _onCreate,
-      );
-      return iOSAndroidDB;
-    }
-    throw Exception("Unsupported platform");
+    return database;
   }
 
   Future<void> _onCreate(Database database, int version) async {

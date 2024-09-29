@@ -14,12 +14,27 @@ class FileService {
   factory FileService() {
     return _instance;
   }
-
+  final bool _isInit = false;
+  bool get isInit => _isInit;
   // _localSaperator 변수 설정
   String get _localSaperator => Platform.pathSeparator;
 
+  String? _localPath;
+  String? get localPath => _localPath;
+
+  Future<void> init() async {
+    // 초기화 작업
+    final localPathResult = await getLocalPath;
+    if (localPathResult.error != null) {
+      throw Exception(localPathResult.error);
+    }
+  }
+
   // 애플리케이션 디렉터리 경로 가져오기
-  Future<Result<String>> get localPath async {
+  Future<Result<String>> get getLocalPath async {
+    if (_localPath != null) {
+      return Result(data: _localPath);
+    }
     try {
       final directory = await getApplicationDocumentsDirectory();
 
@@ -30,7 +45,7 @@ class FileService {
       if (!(await customDir.exists())) {
         await customDir.create(recursive: true); // 하위 폴더까지 생성
       }
-      return Result(data: "${directory.path}${_localSaperator}inghub_pomo");
+      return Result(data: customDirPath);
     } catch (e) {
       return Result(
         error: e is Exception ? e : Exception(e.toString()),
