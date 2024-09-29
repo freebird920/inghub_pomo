@@ -1,58 +1,118 @@
 import 'package:flutter/material.dart';
-import 'package:inghub_pomo/classes/result_class.dart';
-import 'package:inghub_pomo/components/comp_navbar.dart';
-import 'package:inghub_pomo/managers/dialog_manager.dart';
-import 'package:inghub_pomo/providers/file_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:inghub_pomo/classes/user_class.dart';
+import 'package:inghub_pomo/services/sqlite_helper.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final SQLiteHelper helper = SQLiteHelper();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsFlutterBinding.ensureInitialized();
+    helper.initWinDB();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Home Page"),
-        centerTitle: true,
+          leading: TextButton(
+            onPressed: () async {
+              await helper.batchInsert();
+              setState(() {});
+            },
+            child: const Text("ADD"),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                await helper.deleteAllUsers();
+                setState(() {});
+              },
+              child: const Text("DEL"),
+            ),
+          ]),
+      body: FutureBuilder<List<User>>(
+        future: helper.getAllUsers(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('No users found.'));
+          } else {
+            final users = snapshot.data!;
+            return ListView.builder(
+              itemCount: users.length,
+              itemBuilder: (context, index) {
+                final user = users[index];
+
+                return _card(user, context);
+              },
+            );
+          }
+        },
       ),
-      body: Center(
+    );
+  }
+}
+
+Widget _card(User user, BuildContext context) {
+  return Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: Card(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text("Home Page"),
-            Consumer<FileProvider>(
-              builder: (context, fileProvider, _) => TextButton(
-                onPressed: () async {
-                  Result<String> result = await fileProvider.readJsonFile(
-                    directoryPath: fileProvider.localPath ?? "",
-                    fileName: "test.json",
-                  );
-                  DialogManager().showAlertDialog(
-                    AlertDialog(
-                      title: const Text("Result"),
-                      content: Text(result.isSuccess
-                          ? "Success"
-                          : result.isError
-                              ? "Error: ${result.error}"
-                              : "Unknown error"),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: const Text("Close"),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-                child: const Text("PUSH"),
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "ID: ${user.id}",
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              "Name: ${user.name}",
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              "Email: ${user.email}",
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              "Phone Number: ${user.phoneNumber}",
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              "Password: ${user.password}",
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ],
         ),
       ),
-      bottomNavigationBar: const CompNavbar(),
-    );
-  }
+    ),
+  );
 }

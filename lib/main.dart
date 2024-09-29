@@ -12,6 +12,8 @@ import 'package:inghub_pomo/app/layout.dart';
 
 // main function
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => PreferenceProvider()),
