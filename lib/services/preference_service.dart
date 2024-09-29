@@ -2,11 +2,11 @@ import 'package:inghub_pomo/classes/result_class.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PreferenceService {
-  // 싱글돈 인스턴스
   PreferenceService._privateConstructor();
+
   static final PreferenceService _instance =
       PreferenceService._privateConstructor();
-  // 인스턴스에 접근하는 방법
+
   factory PreferenceService() {
     return _instance;
   }

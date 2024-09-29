@@ -15,7 +15,8 @@ class SnackBarManager {
       if (currentState == null) {
         throw Exception("currentState is null");
       }
-      currentState.hideCurrentSnackBar();
+      currentState.clearSnackBars();
+      // currentState.hideCurrentSnackBar();
       currentState.showSnackBar(
         SnackBar(
           content: Text(message),
@@ -41,7 +42,8 @@ class SnackBarManager {
       if (currentState == null) {
         throw Exception("currentState is null");
       }
-      currentState.hideCurrentSnackBar();
+      currentState.clearSnackBars();
+      // currentState.hideCurrentSnackBar();
       currentState.showSnackBar(snackBar);
     } catch (e) {
       showSimpleSnackBar(e.toString());

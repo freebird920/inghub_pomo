@@ -1,5 +1,6 @@
 // import packages
 import 'package:flutter/material.dart';
+import 'package:inghub_pomo/providers/version_provider.dart';
 import 'package:provider/provider.dart';
 
 // project providers
@@ -14,6 +15,7 @@ void main() async {
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => PreferenceProvider()),
+      ChangeNotifierProvider(create: (_) => VersionProvider()),
       ChangeNotifierProvider(create: (_) => FileProvider()),
     ],
     child: const RootLayout(),

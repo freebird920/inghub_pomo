@@ -9,7 +9,7 @@ import 'package:inghub_pomo/managers/dialog_manager.dart';
 
 // import local components
 import 'package:inghub_pomo/app/settings/components/list_tile_set_profile.dart';
-import 'package:inghub_pomo/app/settings/components/list_tile_update_check.dart';
+import 'package:inghub_pomo/app/settings/components/list_tile_version_check.dart';
 import 'package:inghub_pomo/app/settings/components/list_tile_color_picker.dart';
 import 'package:inghub_pomo/app/settings/components/list_tile_dark_mode.dart';
 
@@ -29,7 +29,7 @@ class SettingsPage extends StatelessWidget {
             const ListTileSetProfile(),
             const ListTileDarkMode(),
             const ListTileColorPicker(),
-            const ListTileUpdateCheck(),
+            const ListTileVersionCheck(),
             ListTile(
               leading: const Icon(Icons.info),
               title: const Text("About"),
