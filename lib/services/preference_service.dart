@@ -12,9 +12,14 @@ class PreferenceService {
   }
 
   SharedPreferences? _prefs;
+  SharedPreferences? get prefs => _prefs;
+
   bool get isInitialized => _prefs != null;
 
   Future<void> initPrefs() async {
+    if (_prefs != null) {
+      return;
+    }
     _prefs = await SharedPreferences.getInstance();
   }
 

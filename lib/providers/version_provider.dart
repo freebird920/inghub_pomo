@@ -25,12 +25,18 @@ class VersionProvider with ChangeNotifier {
   }
 
   Future<Version> _getCurrentVersion() async {
+    if (_currentVersion != null) {
+      return _currentVersion!;
+    }
     Version currentVersion = await _versionService.getCurrentVersion();
     _currentVersion = currentVersion;
     return currentVersion;
   }
 
   Future<Result<Version>> _getLatestVersion() async {
+    if (_latestVersion != null) {
+      return Result(data: _latestVersion);
+    }
     final latestVersion = await _versionService.getLatestVersion();
     if (latestVersion.isSuccess && latestVersion.data != null) {
       _latestVersion = latestVersion.data;

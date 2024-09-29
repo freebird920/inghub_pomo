@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:inghub_pomo/classes/user_class.dart';
+import 'package:inghub_pomo/components/comp_navbar.dart';
 import 'package:inghub_pomo/services/sqlite_service.dart';
 
 class HomePage extends StatefulWidget {
@@ -39,6 +40,7 @@ class _HomePageState extends State<HomePage> {
               child: const Text("DEL"),
             ),
           ]),
+      bottomNavigationBar: const CompNavbar(),
       body: FutureBuilder<List<User>>(
         future: sqliteService.getAllUsers(),
         builder: (context, snapshot) {
