@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:inghub_pomo/classes/user_class.dart';
-import 'package:inghub_pomo/services/sqlite_helper.dart';
+import 'package:inghub_pomo/services/sqlite_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -10,7 +10,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final SQLiteHelper helper = SQLiteHelper();
+  final SqliteService helper = SqliteService();
 
   @override
   void initState() {

@@ -5,7 +5,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-class SQLiteHelper {
+class SqliteService {
   Database? _database;
 
   Future<Database> get database async {
