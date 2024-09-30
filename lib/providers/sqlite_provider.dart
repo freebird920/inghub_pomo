@@ -1,11 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:inghub_pomo/schema/profile_schema.dart';
+import 'package:inghub_pomo/services/log_service.dart';
 import 'package:inghub_pomo/services/sqlite_service.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-class SqliteProvider with ChangeNotifier {
-  Database? _database;
-
+class DatabaseProvider with ChangeNotifier {
   List<ProfileSchema>? _profiles;
   List<ProfileSchema>? get profiles => _profiles;
 
@@ -13,24 +12,29 @@ class SqliteProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
 
   final SqliteService _sqliteService = SqliteService();
+  late Database _database;
 
-  SqliteProvider() {
+  DatabaseProvider() {
     // 생성자에서는 초기화를 시작하지 않습니다.
+    init();
   }
 
   Future<void> init() async {
-    if (_database != null) return;
-
     _isLoading = true;
-
     try {
-      await _sqliteService.initDB();
-      _database = await _sqliteService.database;
+      if (_sqliteService.sqliteDatabase != null) {
+        _database = _sqliteService.sqliteDatabase!;
+      } else {
+        await _sqliteService.initDB();
+        _database = _sqliteService.sqliteDatabase!;
+      }
       // 초기 데이터 로드
       await getProfiles();
     } catch (e) {
       // 에러 처리
-      print("Database initialization error: $e");
+      final exception = Exception("Database initialization error: $e");
+      LogService().log("Database initialization error: $e");
+      throw exception;
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -38,11 +42,8 @@ class SqliteProvider with ChangeNotifier {
   }
 
   Future<void> insertProfile(ProfileSchema profile) async {
-    if (_database == null) return;
-
     final data = profile.toMap;
-
-    await _database!.insert(
+    await _database.insert(
       "profiles",
       data,
       conflictAlgorithm: ConflictAlgorithm.replace,
@@ -52,26 +53,41 @@ class SqliteProvider with ChangeNotifier {
   }
 
   Future<List<ProfileSchema>> getProfiles() async {
-    if (_database == null) return [];
-
-    final List<Map<String, dynamic>> maps = await _database!.query("profiles");
+    final List<Map<String, dynamic>> maps = await _database.query("profiles");
     final result = maps.map((map) => ProfileSchema.fromMap(map)).toList();
     _profiles = result;
     notifyListeners();
     return result;
   }
 
-  Future<List<Map<String, dynamic>>> query(String table) async {
-    if (_database == null) return [];
+  Future<void> removeProfile(String uuid) async {
+    await _database.delete(
+      "profiles",
+      where: "uuid = ?",
+      whereArgs: [uuid],
+    );
 
-    return await _database!.query(table);
+    await getProfiles(); // 데이터 변경 후 프로필 목록 업데이트
+  }
+
+  Future<void> updateProfile(ProfileSchema profile) async {
+    final data = profile.toMap;
+    await _database.update(
+      "profiles",
+      data,
+      where: "uuid = ?",
+      whereArgs: [profile.uuid],
+    );
+
+    await getProfiles(); // 데이터 변경 후 프로필 목록 업데이트
+  }
+
+  Future<List<Map<String, dynamic>>> query(String table) async {
+    return await _database.query(table);
   }
 
   Future<void> closeDb() async {
-    if (_database != null) {
-      await _database!.close();
-      _database = null;
-      notifyListeners();
-    }
+    await _database.close();
+    notifyListeners();
   }
 }

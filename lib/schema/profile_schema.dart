@@ -3,11 +3,11 @@ import 'package:uuid/uuid.dart';
 
 class ProfileSchema {
   final String uuid;
-  final String profileName;
-  final String? description;
+  String profileName;
+  String? description;
   final String? currentPomo;
-  final DateTime created; // Flutter에서는 DateTime 사용
-  final DateTime updated;
+  DateTime created; // Flutter에서는 DateTime 사용
+  DateTime updated;
 
   // Uuid 인스턴스 생성
   static const Uuid _uuid = Uuid();

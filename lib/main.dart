@@ -32,7 +32,7 @@ void main() async {
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => PreferenceProvider()),
-      ChangeNotifierProvider(create: (_) => SqliteProvider()),
+      ChangeNotifierProvider(create: (_) => DatabaseProvider()),
       ChangeNotifierProvider(create: (_) => VersionProvider()),
       ChangeNotifierProvider(create: (_) => FileProvider()),
     ],

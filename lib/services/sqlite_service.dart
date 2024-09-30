@@ -11,14 +11,15 @@ class SqliteService {
   static final SqliteService _instance = SqliteService._internal();
   factory SqliteService() => _instance;
 
-  Database? _database;
+  Database? _sqliteDatabase;
+  Database? get sqliteDatabase => _sqliteDatabase;
 
   Future<Database> get database async {
-    if (_database != null) {
-      return _database!;
+    if (_sqliteDatabase != null) {
+      return _sqliteDatabase!;
     }
-    _database = await initDB();
-    return _database!;
+    _sqliteDatabase = await initDB();
+    return _sqliteDatabase!;
   }
 
   Future<Database> initDB() async {
@@ -39,6 +40,7 @@ class SqliteService {
         ),
       );
       LogService().log("Database initialized");
+      _sqliteDatabase = database;
       return database;
     } catch (e) {
       LogService().log(e.toString());
@@ -48,16 +50,6 @@ class SqliteService {
 
   Future<void> _onCreate(Database database, int version) async {
     final db = database;
-    await db.execute(
-      """ CREATE TABLE IF NOT EXISTS users(
-            id INTEGER PRIMARY KEY,
-            name TEXT,
-            email TEXT,
-            password INTEGER,
-            phoneNumber INTEGER
-          )
-      """,
-    );
     await db.execute(ProfileSchema.schema.generateCreateTableSQL());
   }
 
