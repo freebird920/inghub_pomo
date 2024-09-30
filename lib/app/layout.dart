@@ -31,19 +31,20 @@ class RootLayout extends StatelessWidget {
                 fontFamily: "NotoSansKR",
                 colorScheme: colorScheme,
                 appBarTheme: AppBarTheme(
-                  surfaceTintColor: colorScheme.primary.withOpacity(0.9),
-                  elevation: 4.0,
-                  // systemOverlayStyle: SystemUiOverlayStyle.dark,
+                  centerTitle: true,
                   shadowColor:
-                      colorScheme.primary.withOpacity(0.2), // 흐릿한 그림자 색상
-
-                  // backgroundColor: colorScheme.onPrimary,
+                      colorScheme.shadow.withOpacity(0.5), // 흐릿한 그림자 색상
                   titleTextStyle: TextStyle(
                     fontFamily: "NotoSansKR",
                     fontWeight: FontWeight.w700,
                     fontSize: 20,
                     color: colorScheme.primary,
                   ),
+
+                  // surfaceTintColor: colorScheme.primary.withOpacity(0.9),
+                  // elevation: 4.0,
+                  // systemOverlayStyle: SystemUiOverlayStyle.dark,
+                  // backgroundColor: colorScheme.onPrimary,
                 ),
               ),
               routerConfig: ingHubRouter,

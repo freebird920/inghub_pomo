@@ -44,7 +44,7 @@ void main() async {
     providers: [
       ChangeNotifierProvider(create: (_) => preferenceProvider),
       ChangeNotifierProvider(create: (_) => databaseProvider),
-      ChangeNotifierProvider(create: (_) => VersionProvider()),
+      ChangeNotifierProvider(create: (_) => versionProvider),
       ChangeNotifierProvider(create: (_) => FileProvider()),
     ],
     child: const RootLayout(),

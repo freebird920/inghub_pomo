@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:inghub_pomo/managers/snack_bar_manager.dart';
 import 'package:inghub_pomo/providers/version_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class ListTileVersionCheck extends StatelessWidget {
   const ListTileVersionCheck({
@@ -25,16 +24,10 @@ class ListTileVersionCheck extends StatelessWidget {
                       : const Text("업뎃ㄱㄱㄱㄱㄱ"),
           subtitle: const Text("업데이트 확인합니다."),
           onTap: () async {
-            final targetUri = Uri.parse(
+            await launchUrlString(
               "https://github.com/freebird920/inghub_pomo/releases/latest",
             );
-            if (await canLaunchUrl(targetUri) == false) {
-              SnackBarManager().showSimpleSnackBar("URL을 열 수 없습니다.");
-              return;
-            }
-            await launchUrl(
-              targetUri,
-            );
+            return;
           },
         );
       },

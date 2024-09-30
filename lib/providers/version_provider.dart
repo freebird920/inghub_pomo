@@ -17,6 +17,7 @@ class VersionProvider with ChangeNotifier {
 
   Future<void> init() async {
     _isLoading = true;
+    await _versionService.init();
     await _getLatestVersion();
     await _getCurrentVersion();
     _isLoading = false;

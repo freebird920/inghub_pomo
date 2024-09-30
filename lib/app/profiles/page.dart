@@ -26,7 +26,6 @@ class ProfilesPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("프로필 설정"),
-        centerTitle: true,
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -65,7 +64,7 @@ class ProfilesPage extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.fromLTRB(
                       30, // Left
-                      15, // Top
+                      10, // Top
                       30, // Right
                       10, // Bottom
                     ),
