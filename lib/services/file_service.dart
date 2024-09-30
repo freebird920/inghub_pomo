@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:inghub_pomo/classes/result_class.dart';
+import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 class FileService {
@@ -25,6 +26,7 @@ class FileService {
   Future<void> init() async {
     // 초기화 작업
     final localPathResult = await getLocalPath;
+    _localPath = localPathResult.successData;
     if (localPathResult.error != null) {
       throw Exception(localPathResult.error);
     }
@@ -50,6 +52,25 @@ class FileService {
       return Result(
         error: e is Exception ? e : Exception(e.toString()),
       );
+    }
+  }
+
+  Future<Result<bool>> appendStringToFile({
+    required String data,
+    required String fileName,
+    required String directoryPath,
+  }) async {
+    try {
+      final path = join(directoryPath, fileName);
+      final directory = Directory(directoryPath);
+      if (!(await directory.exists())) {
+        await directory.create(recursive: true);
+      }
+      final file = File(path);
+      await file.writeAsString(data, mode: FileMode.writeOnlyAppend);
+      return Result(data: true);
+    } catch (e) {
+      return Result(error: e is Exception ? e : Exception(e.toString()));
     }
   }
 

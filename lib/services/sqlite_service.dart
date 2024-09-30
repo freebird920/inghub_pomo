@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:inghub_pomo/classes/user_class.dart';
 import 'package:inghub_pomo/services/file_service.dart';
+import 'package:inghub_pomo/services/log_service.dart';
 import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -20,22 +21,28 @@ class SqliteService {
   }
 
   Future<Database> initDB() async {
-    sqfliteFfiInit();
-    final databaseFactory = databaseFactoryFfi;
-    FileService fileService = FileService();
-    final localPathResult = await fileService.getLocalPath;
-    if (localPathResult.error != null) {
-      throw Exception(localPathResult.error);
+    try {
+      sqfliteFfiInit();
+      final databaseFactory = databaseFactoryFfi;
+      FileService fileService = FileService();
+      final localPathResult = await fileService.getLocalPath;
+      if (localPathResult.error != null) {
+        throw Exception(localPathResult.error);
+      }
+      final dbPath = join(localPathResult.successData, "data.db");
+      final database = await databaseFactory.openDatabase(
+        dbPath,
+        options: OpenDatabaseOptions(
+          version: 1,
+          onCreate: _onCreate,
+        ),
+      );
+      LogService().log("Database initialized");
+      return database;
+    } catch (e) {
+      LogService().log(e.toString());
+      throw Exception(e.toString());
     }
-    final dbPath = join(localPathResult.successData, "data.db");
-    final database = await databaseFactory.openDatabase(
-      dbPath,
-      options: OpenDatabaseOptions(
-        version: 1,
-        onCreate: _onCreate,
-      ),
-    );
-    return database;
   }
 
   Future<void> _onCreate(Database database, int version) async {
