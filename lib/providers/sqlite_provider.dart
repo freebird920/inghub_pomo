@@ -14,9 +14,7 @@ class DatabaseProvider with ChangeNotifier {
   final SqliteService _sqliteService = SqliteService();
   late Database _database;
 
-  DatabaseProvider() {
-    init();
-  }
+  DatabaseProvider();
 
   Future<void> init() async {
     _isLoading = true;

@@ -9,6 +9,25 @@ class ModalManager {
   factory ModalManager() => _instance;
 
   ModalManager._internal();
+  void showStatefulBottomSheet(StatefulWidget bottomSheet) {
+    final thisContext = navigatorKey.currentContext;
+    try {
+      if (thisContext == null) {
+        throw Exception("context is null");
+      }
+      showModalBottomSheet(
+        context: thisContext,
+        isScrollControlled: true,
+        showDragHandle: true,
+        builder: (context) => bottomSheet, // `StatefulWidget` 사용
+      ).catchError((e) {
+        throw Exception("Error showing bottom sheet: $e");
+      });
+    } catch (e) {
+      openCompSnackBar(message: e.toString());
+    }
+  }
+
   void showBottomSheet(WidgetBuilder bottomSheet) {
     final thisContext = navigatorKey.currentContext;
     try {

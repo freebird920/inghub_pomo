@@ -20,17 +20,23 @@ import 'package:inghub_pomo/components/comp_navbar.dart';
 // HomePage
 class ProfilesPage extends StatelessWidget {
   const ProfilesPage({super.key});
-
   @override
   Widget build(BuildContext context) {
+    DatabaseProvider databaseProvider = Provider.of<DatabaseProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text("프로필 설정"),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            onPressed: () {
-              ModalManager().showBottomSheet(setProfileBoxBuilder);
+            onPressed: () async {
+              // ModalManager().showBottomSheet(setProfileBoxBuilder);
+              // showModalBottomSheet(
+              //     context: context, builder: setProfileBoxBuilder);
+              final result = await openProfileModal(context);
+              if (result != null) {
+                databaseProvider.insertProfile(result);
+              }
             },
           ),
         ],
@@ -39,18 +45,6 @@ class ProfilesPage extends StatelessWidget {
       body: Center(
         child: Consumer(
           builder: (context, DatabaseProvider sqliteProvider, child) {
-            if (sqliteProvider.isLoading == true) {
-              return const CircularProgressIndicator();
-            }
-            if (sqliteProvider.profiles == null ||
-                sqliteProvider.profiles!.isEmpty) {
-              return TextButton(
-                onPressed: () {
-                  ModalManager().showBottomSheet(setProfileBoxBuilder);
-                },
-                child: const Text("프로필 추가하기"),
-              );
-            }
             return ListView.builder(
               // padding: const EdgeInsets.fromLTRB(
               //   4,
@@ -70,7 +64,7 @@ class ProfilesPage extends StatelessWidget {
                     ),
                     child: TextButton(
                       onPressed: () {
-                        ModalManager().showBottomSheet(setProfileBoxBuilder);
+                        // ModalManager().showBottomSheet(setProfileBoxBuilder);
                       },
                       child: const Text(
                         "새 프로필 추가하기",
