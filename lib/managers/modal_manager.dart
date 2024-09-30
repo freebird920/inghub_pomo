@@ -28,7 +28,7 @@ class ModalManager {
     }
   }
 
-  void showAlertDialog(Widget alertDialog) {
+  void showAlertDialog(WidgetBuilder alertDialogBuilder) {
     final thisContext = navigatorKey.currentContext;
     try {
       if (thisContext == null) {
@@ -36,7 +36,7 @@ class ModalManager {
       }
       showDialog(
         context: thisContext,
-        builder: (BuildContext context) => alertDialog,
+        builder: alertDialogBuilder,
       ).catchError((e) {
         throw Exception("Error showing dialog: $e");
       });

@@ -28,6 +28,9 @@ class VersionService {
   }
 
   Future<Version> getCurrentVersion() async {
+    if (_currentVersion != null) {
+      return _currentVersion!;
+    }
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     String packageinfoVersion = packageInfo.version;
     Version version = Version.parse(packageinfoVersion);
@@ -36,6 +39,9 @@ class VersionService {
   }
 
   Future<Result<Version>> getLatestVersion() async {
+    if (_latestVersion != null) {
+      return Result(data: _latestVersion);
+    }
     final url = Uri.parse(
         'https://api.github.com/repos/freebird920/inghub_pomo/releases/latest');
     try {

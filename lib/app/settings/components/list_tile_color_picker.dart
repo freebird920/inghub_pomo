@@ -42,7 +42,9 @@ class _ListTileColorPickerState extends State<ListTileColorPicker> {
       ),
       subtitle: const Text("Change the theme color"),
       onTap: () {
-        ModalManager().showAlertDialog(const CompModalColorPicker());
+        ModalManager().showAlertDialog(
+          (context) => const CompModalColorPicker(),
+        );
       },
     );
   }

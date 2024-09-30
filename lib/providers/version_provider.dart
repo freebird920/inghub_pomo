@@ -4,9 +4,8 @@ import 'package:inghub_pomo/services/version_service.dart';
 import 'package:pub_semver/pub_semver.dart';
 
 class VersionProvider with ChangeNotifier {
-  VersionProvider() {
-    _init();
-  }
+  VersionProvider();
+
   bool _isLoading = false;
   bool get isLoading => _isLoading;
   Version? _currentVersion;
@@ -16,7 +15,7 @@ class VersionProvider with ChangeNotifier {
 
   final VersionService _versionService = VersionService();
 
-  void _init() async {
+  Future<void> init() async {
     _isLoading = true;
     await _getLatestVersion();
     await _getCurrentVersion();

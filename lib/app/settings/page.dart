@@ -36,18 +36,7 @@ class SettingsPage extends StatelessWidget {
               subtitle: const Text("About this app"),
               onTap: () {
                 ModalManager().showAlertDialog(
-                  AlertDialog(
-                    title: const Text("About"),
-                    content: const Text("This is a very simple app."),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text("Close"),
-                      ),
-                    ],
-                  ),
+                  (context) => const TestDialog(),
                 );
               },
             ),
@@ -55,6 +44,28 @@ class SettingsPage extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: const CompNavbar(),
+    );
+  }
+}
+
+class TestDialog extends StatelessWidget {
+  const TestDialog({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text("About"),
+      content: const Text("This is a very simple app."),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text("Close"),
+        ),
+      ],
     );
   }
 }

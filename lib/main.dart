@@ -4,9 +4,6 @@ import 'package:inghub_pomo/providers/sqlite_provider.dart';
 import 'package:inghub_pomo/providers/version_provider.dart';
 import 'package:inghub_pomo/services/file_service.dart';
 import 'package:inghub_pomo/services/log_service.dart';
-import 'package:inghub_pomo/services/preference_service.dart';
-import 'package:inghub_pomo/services/sqlite_service.dart';
-import 'package:inghub_pomo/services/version_service.dart';
 import 'package:provider/provider.dart';
 
 // project providers
@@ -20,19 +17,33 @@ import 'package:inghub_pomo/app/layout.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // init services
-  await FileService().getLocalPath;
-  await LogService().init();
-  await SqliteService().database;
-  await VersionService().init();
-  await PreferenceService().initPrefs();
+
+  // 모든 서비스 비동기 초기화
+  await Future.wait([
+    FileService().getLocalPath,
+    LogService().init(),
+    // SqliteService().database,
+    // PreferenceService().initPrefs(),
+  ]);
+
+// 프로바이더 선언 및 초기화
 
   await LogService().log("App started");
-
+  final DatabaseProvider databaseProvider = DatabaseProvider();
+  final PreferenceProvider preferenceProvider = PreferenceProvider();
+  final VersionProvider versionProvider = VersionProvider();
+  await Future.wait(
+    [
+      databaseProvider.init(),
+      preferenceProvider.init(),
+      versionProvider.init(),
+    ],
+  );
   // run app
   runApp(MultiProvider(
     providers: [
-      ChangeNotifierProvider(create: (_) => PreferenceProvider()),
-      ChangeNotifierProvider(create: (_) => DatabaseProvider()),
+      ChangeNotifierProvider(create: (_) => preferenceProvider),
+      ChangeNotifierProvider(create: (_) => databaseProvider),
       ChangeNotifierProvider(create: (_) => VersionProvider()),
       ChangeNotifierProvider(create: (_) => FileProvider()),
     ],

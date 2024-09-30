@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:inghub_pomo/classes/user_class.dart';
 import 'package:inghub_pomo/schema/profile_schema.dart';
 import 'package:inghub_pomo/services/file_service.dart';
@@ -14,13 +13,13 @@ class SqliteService {
   Database? _sqliteDatabase;
   Database? get sqliteDatabase => _sqliteDatabase;
 
-  Future<Database> get database async {
-    if (_sqliteDatabase != null) {
-      return _sqliteDatabase!;
-    }
-    _sqliteDatabase = await initDB();
-    return _sqliteDatabase!;
-  }
+  // Future<Database> get database async {
+  //   if (_sqliteDatabase != null) {
+  //     return _sqliteDatabase!;
+  //   }
+  //   _sqliteDatabase = await initDB();
+  //   return _sqliteDatabase!;
+  // }
 
   Future<Database> initDB() async {
     try {
@@ -54,82 +53,16 @@ class SqliteService {
   }
 
   Future<User> insertUSer(User user) async {
-    final db = await database;
+    // final db = await database;
+    final db = _sqliteDatabase;
+    if (db == null) {
+      throw Exception("Database is not initialized");
+    }
     db.insert(
       "users",
       user.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
     return user;
-  }
-
-  Future<List<User>> batchInsert() async {
-    final db = await database;
-    final batch = db.batch();
-    final Random random = Random();
-    final List<User> userList = List.generate(
-      1000,
-      (index) => User(
-        id: index + 1,
-        name: 'User $index',
-        email: 'user$index@example.com',
-        password: random.nextInt(9999),
-        phoneNumber: random.nextInt(10000),
-      ),
-    );
-    for (final User user in userList) {
-      batch.insert(
-        'users',
-        user.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
-    }
-    await batch.commit();
-    return userList;
-  }
-
-  Future<List<User>> getAllUsers() async {
-    final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('users');
-
-    return List.generate(maps.length, (index) {
-      return User(
-        id: maps[index]['id'],
-        name: maps[index]['name'],
-        email: maps[index]['email'],
-        password: maps[index]['password'],
-        phoneNumber: maps[index]['phoneNumber'],
-      );
-    });
-  }
-
-  Future<User?> getUserById(int userId) async {
-    final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(
-      'users',
-      where: 'id = ?',
-      whereArgs: [userId],
-    );
-
-    if (maps.isNotEmpty) {
-      return User(
-        id: maps[0]['id'],
-        name: maps[0]['name'],
-        email: maps[0]['email'],
-        password: maps[0]['password'],
-        phoneNumber: maps[0]['phoneNumber'],
-      );
-    }
-
-    return null;
-  }
-
-  Future<void> deleteAllUsers() async {
-    final db = await database;
-    final Batch batch = db.batch();
-
-    batch.delete('users');
-
-    await batch.commit();
   }
 }

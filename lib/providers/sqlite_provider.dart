@@ -15,7 +15,6 @@ class DatabaseProvider with ChangeNotifier {
   late Database _database;
 
   DatabaseProvider() {
-    // 생성자에서는 초기화를 시작하지 않습니다.
     init();
   }
 

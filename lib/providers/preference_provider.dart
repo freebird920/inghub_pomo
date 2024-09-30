@@ -11,12 +11,10 @@ class PreferenceProvider with ChangeNotifier {
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
-  PreferenceProvider() {
-    loadPreferences();
-  }
+  PreferenceProvider();
 
   // 초기화 및 Preference 데이터 로드
-  Future<void> loadPreferences() async {
+  Future<void> init() async {
     _isLoading = true;
     await _preferenceService.initPrefs();
     _isLoading = false;
