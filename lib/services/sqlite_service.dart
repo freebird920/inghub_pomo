@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:inghub_pomo/classes/user_class.dart';
+import 'package:inghub_pomo/schema/profile_schema.dart';
 import 'package:inghub_pomo/services/file_service.dart';
 import 'package:inghub_pomo/services/log_service.dart';
 import 'package:path/path.dart';
@@ -47,14 +48,17 @@ class SqliteService {
 
   Future<void> _onCreate(Database database, int version) async {
     final db = database;
-    await db.execute(""" CREATE TABLE IF NOT EXISTS users(
+    await db.execute(
+      """ CREATE TABLE IF NOT EXISTS users(
             id INTEGER PRIMARY KEY,
             name TEXT,
             email TEXT,
             password INTEGER,
             phoneNumber INTEGER
           )
- """);
+      """,
+    );
+    await db.execute(ProfileSchema.schema.generateCreateTableSQL());
   }
 
   Future<User> insertUSer(User user) async {
