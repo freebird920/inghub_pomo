@@ -23,7 +23,7 @@ class ProfilePopupMenuButton extends StatelessWidget {
       onSelected: (value) async {
         switch (value) {
           case ProfilePopupMenuButtonEnum.edit:
-            ModalManager().showBottomSheetStatefulWidget<String?>(
+            ModalManager().showBottomSheetWidget<String?>(
               SetProfileModal(
                 profile: profile,
               ),

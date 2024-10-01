@@ -30,6 +30,7 @@ class _CompNavbarState extends State<CompNavbar> {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
+      type: BottomNavigationBarType.fixed,
       currentIndex: _selectedIndex,
       onTap: (int value) {
         final goRouter = GoRouter.of(context);

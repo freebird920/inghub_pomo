@@ -97,8 +97,7 @@ class _CompProfilesPageState extends State<CompProfilesPage> {
           return TextButton(
             onPressed: () async {
               final result = await ModalManager()
-                  .showBottomSheetStatefulWidget<String?>(
-                      const SetProfileModal());
+                  .showBottomSheetWidget<String?>(const SetProfileModal());
               if (result == null) {
                 SnackBarManager().showSimpleSnackBar("취소");
                 return;

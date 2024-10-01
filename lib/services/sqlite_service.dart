@@ -1,4 +1,5 @@
 import 'package:inghub_pomo/classes/user_class.dart';
+import 'package:inghub_pomo/schema/pomo_type_schema.dart';
 import 'package:inghub_pomo/schema/profile_schema.dart';
 import 'package:inghub_pomo/services/file_service.dart';
 import 'package:inghub_pomo/services/log_service.dart';
@@ -50,6 +51,7 @@ class SqliteService {
   Future<void> _onCreate(Database database, int version) async {
     final db = database;
     await db.execute(ProfileSchema.schema.generateCreateTableSQL());
+    await db.execute(PomoTypeSchema.schema.generateCreateTableSQL());
   }
 
   Future<User> insertUSer(User user) async {

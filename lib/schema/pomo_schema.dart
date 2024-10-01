@@ -1,18 +1,18 @@
 import 'package:inghub_pomo/classes/sqlite_schema_class.dart';
 import 'package:uuid/uuid.dart';
 
-class ProfileSchema {
+class PomoSchema {
   final String uuid;
   String profileName;
   String? description;
-  String? currentPomo;
+  final String? currentPomo;
   DateTime created; // Flutter에서는 DateTime 사용
   DateTime updated;
 
   // Uuid 인스턴스 생성
   static const Uuid _uuid = Uuid();
 
-  ProfileSchema({
+  PomoSchema({
     String? uuid, // uuid는 선택적 파라미터
     required this.profileName,
     required this.created,
@@ -34,8 +34,8 @@ class ProfileSchema {
   }
 
   // 맵에서 객체로 변환하는 팩토리 메서드 추가
-  factory ProfileSchema.fromMap(Map<String, dynamic> map) {
-    return ProfileSchema(
+  factory PomoSchema.fromMap(Map<String, dynamic> map) {
+    return PomoSchema(
       uuid: map["uuid"],
       profileName: map["profileName"],
       currentPomo: map["currentPomo"],

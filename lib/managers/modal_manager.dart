@@ -10,8 +10,7 @@ class ModalManager {
 
   ModalManager._internal();
 
-  Future<T?> showBottomSheetStatefulWidget<T>(
-      StatefulWidget statefulWidget) async {
+  Future<T?> showBottomSheetWidget<T>(Widget widget) async {
     final thisContext = navigatorKey.currentContext;
     try {
       if (thisContext == null) {
@@ -21,7 +20,7 @@ class ModalManager {
         context: thisContext,
         isScrollControlled: true,
         showDragHandle: true,
-        builder: (context) => statefulWidget, // `StatefulWidget` 사용
+        builder: (context) => widget, // `StatefulWidget` 사용
       ).catchError((e) {
         throw Exception("Error showing bottom sheet: $e");
       });
