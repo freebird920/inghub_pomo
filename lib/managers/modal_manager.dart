@@ -10,7 +10,8 @@ class ModalManager {
 
   ModalManager._internal();
 
-  Future<T?> showBottomSheetStateful<T>(StatefulWidget statefulWidget) async {
+  Future<T?> showBottomSheetStatefulWidget<T>(
+      StatefulWidget statefulWidget) async {
     final thisContext = navigatorKey.currentContext;
     try {
       if (thisContext == null) {
@@ -34,60 +35,22 @@ class ModalManager {
     return null;
   }
 
-  Future<T?> showFutureBottomSheetStateful<T>(
-      StatefulWidget statefulWidget) async {
-    final currentContext = navigatorKey.currentContext;
+  Future<T?> showAlertDialog<T>(Widget widget) async {
+    final thisContext = navigatorKey.currentContext;
     try {
-      if (currentContext == null) {
+      if (thisContext == null) {
         throw Exception("context is null");
       }
-      return await showModalBottomSheet<T>(
-        context: currentContext,
-        isScrollControlled: true,
-        showDragHandle: true,
-        builder: (context) => statefulWidget, // `StatefulWidget` 사용
+      final T? result = await showDialog(
+        context: thisContext,
+        builder: (context) => widget,
       ).catchError((e) {
-        throw Exception("Error showing bottom sheet: $e");
+        throw Exception("Error showing dialog: $e");
       });
+      return result;
     } catch (e) {
       openCompSnackBar(message: e.toString());
     }
     return null;
-  }
-
-  void showBottomSheet(WidgetBuilder bottomSheet) {
-    final thisContext = navigatorKey.currentContext;
-    try {
-      if (thisContext == null) {
-        throw Exception("context is null");
-      }
-      showModalBottomSheet(
-        context: thisContext,
-        isScrollControlled: true,
-        showDragHandle: true,
-        builder: bottomSheet,
-      ).catchError((e) {
-        throw Exception("Error showing bottom sheet: $e");
-      });
-    } catch (e) {
-      openCompSnackBar(message: e.toString());
-    }
-  }
-
-  void showAlertDialog(WidgetBuilder alertDialogBuilder) {
-    final thisContext = navigatorKey.currentContext;
-    try {
-      if (thisContext == null) {
-        throw Exception("context is null");
-      }
-      showDialog(
-        context: thisContext,
-        builder: alertDialogBuilder,
-      ).catchError((e) {
-        throw Exception("Error showing dialog: $e");
-      });
-    } catch (e) {
-      openCompSnackBar(message: e.toString());
-    }
   }
 }

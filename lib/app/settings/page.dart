@@ -34,7 +34,7 @@ class SettingsPage extends StatelessWidget {
               subtitle: const Text("About this app"),
               onTap: () {
                 ModalManager().showAlertDialog(
-                  (context) => const TestDialog(),
+                  const TestDialog(),
                 );
               },
             ),

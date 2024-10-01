@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: const Icon(Icons.person_outline_rounded),
             onPressed: () {
-              ModalManager().showFutureBottomSheetStateful(
+              ModalManager().showBottomSheetStatefulWidget(
                 const CompProfilesPage(),
               );
             },

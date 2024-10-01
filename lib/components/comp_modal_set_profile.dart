@@ -139,7 +139,9 @@ class SetProfileModalState extends State<SetProfileModal> {
                             description: descriptionController.text.isEmpty
                                 ? null
                                 : descriptionController.text,
-                            created: DateTime.now(),
+                            created: _targetProfile != null
+                                ? _targetProfile!.created
+                                : DateTime.now(),
                             updated: DateTime.now(),
                           );
                           if (_targetProfile != null) {

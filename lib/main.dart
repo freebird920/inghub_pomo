@@ -27,7 +27,6 @@ void main() async {
   ]);
 
   // 프로바이더 선언 및 초기화
-  // TODO: pomodoro 상태를 관리하는 Provider 추가하기
   // TODO:
 
   await LogService().log("App started");

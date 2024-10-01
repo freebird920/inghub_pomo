@@ -75,15 +75,18 @@ class SqliteProvider with ChangeNotifier {
   /// # removeProfile
   /// - uuid를 받아 profiles 테이블에서 해당 데이터를 삭제합니다.
   /// - 데이터를 삭제한 후 프로필 목록을 업데이트합니다.
-  /// TODO: 삭제 후 리뷰 로직 추가 필요
-  Future<void> removeProfile(String uuid) async {
-    await _database.delete(
-      "profiles",
-      where: "uuid = ?",
-      whereArgs: [uuid],
-    );
-
-    await getProfiles(); // 데이터 변경 후 프로필 목록 업데이트
+  Future<Result<String>> removeProfile(String uuid) async {
+    try {
+      await _database.delete(
+        "profiles",
+        where: "uuid = ?",
+        whereArgs: [uuid],
+      );
+      await getProfiles(); // 데이터 변경 후 프로필 목록 업데이트
+      return Result(data: uuid);
+    } catch (e) {
+      return Result(error: e is Exception ? e : Exception(e.toString()));
+    }
   }
 
   /// # updateProfile

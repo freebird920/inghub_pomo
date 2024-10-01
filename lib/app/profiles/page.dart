@@ -24,7 +24,7 @@ class ProfilesPage extends StatelessWidget {
             icon: const Icon(Icons.add),
             onPressed: () async {
               final String? result = await ModalManager()
-                  .showFutureBottomSheetStateful(const SetProfileModal());
+                  .showBottomSheetStatefulWidget(const SetProfileModal());
               if (result == null) SnackBarManager().showSimpleSnackBar("취소");
               if (result is String) {
                 SnackBarManager().showSimpleSnackBar(result);
