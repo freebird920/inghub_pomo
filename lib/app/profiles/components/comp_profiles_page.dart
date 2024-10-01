@@ -74,7 +74,7 @@ class _CompProfilesPageState extends State<CompProfilesPage> {
     if (index != -1) {
       _itemScrollController.scrollTo(
         index: index,
-        duration: const Duration(milliseconds: 1500),
+        duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOutCirc,
       );
     }
