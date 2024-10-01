@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:inghub_pomo/classes/inghub_icon_class.dart';
 import 'package:inghub_pomo/components/comp_navbar.dart';
 import 'package:inghub_pomo/managers/modal_manager.dart';
 import 'package:inghub_pomo/providers/sqlite_provider.dart';
@@ -91,13 +92,11 @@ class _SetPomoTypeBoxState extends State<SetPomoTypeBox> {
                       itemCount: _sqliteProvider.pomoTypes!.length,
                       itemBuilder: (context, index) {
                         final pomoType = _sqliteProvider.pomoTypes?[index];
+                        final Icon myIcon = InghubIconClass.fromCodePoint(
+                                pomoType!.iconCodePoint)
+                            .icon;
                         return ListTile(
-                          leading: Icon(
-                            IconData(
-                              pomoType?.iconCodePoint ?? 0xe046,
-                              fontFamily: "MaterialIcons",
-                            ),
-                          ),
+                          leading: myIcon,
                           title: Text("Pomo Type $index"),
                           subtitle: Text(
                             _sqliteProvider.pomoTypes?[index].typeName ??

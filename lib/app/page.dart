@@ -24,14 +24,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    print(Icons.ac_unit.codePoint);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Home"),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(IconData(57399, fontFamily: 'MaterialIcons')),
+            icon: const Icon(Icons.open_in_new),
             onPressed: () {
               ModalManager().showBottomSheetWidget(
                 const CompProfilesPage(),

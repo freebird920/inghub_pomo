@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:inghub_pomo/classes/inghub_icon_class.dart';
 import 'package:inghub_pomo/classes/sqlite_schema_class.dart';
 import 'package:uuid/uuid.dart';
 
@@ -5,7 +7,7 @@ class PomoTypeSchema {
   final String uuid;
   String typeName;
   String? description;
-  int? iconCodePoint;
+  int iconCodePoint;
   int runningTime; // Flutter에서는 DateTime 사용
   bool? isDefault;
 
@@ -21,7 +23,7 @@ class PomoTypeSchema {
       required this.typeName,
       required this.runningTime,
       this.description,
-      this.iconCodePoint,
+      this.iconCodePoint = 0xe046,
       this.isDefault})
       : uuid = uuid ?? _uuid.v4(); // uuid가 없을 경우 자동 생성
 
@@ -57,7 +59,7 @@ class PomoTypeSchema {
           "profileName": "TEXT NOT NULL",
           "runningTime": "INTEGER NOT NULL",
           "description": "TEXT",
-          "iconCodePoint": "INTEGER",
+          "iconCodePoint": "INTEGER NOT NULL",
           "isDefault": "INTEGER",
         },
       );
@@ -68,7 +70,8 @@ class PomoTypeSchema {
           typeName: "집중",
           runningTime: 60 * 25,
           description: "25분 집중 후 5분 휴식",
-          iconCodePoint: 0xe801,
+          iconCodePoint:
+              InghubIconClass.fromIcon(const Icon(Icons.hardware)).codePoint,
           isDefault: true,
         ),
         PomoTypeSchema(
@@ -76,7 +79,8 @@ class PomoTypeSchema {
           typeName: "잠깐 휴식",
           runningTime: 60 * 5,
           description: "5분 휴식",
-          iconCodePoint: 0xe802,
+          iconCodePoint:
+              InghubIconClass.fromIcon(const Icon(Icons.coffee)).codePoint,
           isDefault: true,
         ),
         PomoTypeSchema(
@@ -84,7 +88,9 @@ class PomoTypeSchema {
           typeName: "긴 휴식",
           runningTime: 60 * 30,
           description: "30분 휴식",
-          iconCodePoint: 0xe803,
+          iconCodePoint:
+              InghubIconClass.fromIcon(const Icon(Icons.bed_outlined))
+                  .codePoint,
           isDefault: true,
         ),
       ];
