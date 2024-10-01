@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:inghub_pomo/app/routes.dart';
 import 'package:inghub_pomo/app/utils/keys.dart';
-import 'package:inghub_pomo/providers/preference_provider.dart';
+import 'package:inghub_pomo/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 
 class RootLayout extends StatelessWidget {
@@ -10,13 +9,10 @@ class RootLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<PreferenceProvider>(
-      builder: (context, preferenceProvider, _) {
-        final bool darkTheme =
-            preferenceProvider.getPrefBool("theme_dark_mode") ?? false;
-        final Color themeColor = Color(
-            preferenceProvider.getPrefInt("theme_color") ??
-                Colors.indigo.value);
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, _) {
+        final bool darkTheme = themeProvider.isDarkMode;
+        final Color themeColor = themeProvider.themeColor;
         final ColorScheme colorScheme = ColorScheme.fromSeed(
           seedColor: themeColor,
           brightness: darkTheme ? Brightness.dark : Brightness.light,

@@ -83,4 +83,16 @@ class PreferenceService {
     }
     return _prefs?.getInt(key);
   }
+
+  Future<Result<bool>> removePref(String key) async {
+    try {
+      if (_prefs == null) {
+        await initPrefs();
+      }
+      final result = await _prefs?.remove(key);
+      return Result(data: result ?? false);
+    } catch (e) {
+      return Result(error: e is Exception ? e : Exception(e.toString()));
+    }
+  }
 }

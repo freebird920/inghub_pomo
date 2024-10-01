@@ -1,10 +1,11 @@
 import 'package:flutter/foundation.dart';
+import 'package:inghub_pomo/classes/result_class.dart';
 import 'package:inghub_pomo/schema/profile_schema.dart';
 import 'package:inghub_pomo/services/log_service.dart';
 import 'package:inghub_pomo/services/sqlite_service.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-class DatabaseProvider with ChangeNotifier {
+class SqliteProvider with ChangeNotifier {
   List<ProfileSchema>? _profiles;
   List<ProfileSchema>? get profiles => _profiles;
 
@@ -14,7 +15,7 @@ class DatabaseProvider with ChangeNotifier {
   final SqliteService _sqliteService = SqliteService();
   late Database _database;
 
-  DatabaseProvider();
+  SqliteProvider();
 
   Future<void> init() async {
     _isLoading = true;
@@ -38,17 +39,31 @@ class DatabaseProvider with ChangeNotifier {
     }
   }
 
-  Future<void> insertProfile(ProfileSchema profile) async {
-    final data = profile.toMap;
-    await _database.insert(
-      "profiles",
-      data,
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+  // Profile 관리
 
-    await getProfiles(); // 데이터 변경 후 프로필 목록 업데이트
+  /// # insertProfile
+  /// - [ProfileSchema]를 받아 profiles 테이블에 추가합니다.
+  ///
+  Future<Result<ProfileSchema>> insertProfile(ProfileSchema profile) async {
+    final data = profile.toMap;
+    try {
+      await _database.insert(
+        "profiles",
+        data,
+        conflictAlgorithm: ConflictAlgorithm.abort,
+      );
+      return Result(data: profile);
+    } catch (e) {
+      return Result(error: e is Exception ? e : Exception(e.toString()));
+    } finally {
+      await getProfiles(); // 데이터 변경 후 프로필 목록 업데이트
+    }
   }
 
+  /// # getProfiles
+  /// - profiles 테이블의 모든 데이터를 가져옵니다.
+  /// - 데이터를 가져온 후 _profiles에 저장하고 notifyListeners()를 호출합니다.
+  /// - Ui를 업데이트 함.
   Future<List<ProfileSchema>> getProfiles() async {
     final List<Map<String, dynamic>> maps = await _database.query("profiles");
     final result = maps.map((map) => ProfileSchema.fromMap(map)).toList();
@@ -57,6 +72,10 @@ class DatabaseProvider with ChangeNotifier {
     return result;
   }
 
+  /// # removeProfile
+  /// - uuid를 받아 profiles 테이블에서 해당 데이터를 삭제합니다.
+  /// - 데이터를 삭제한 후 프로필 목록을 업데이트합니다.
+  /// TODO: 삭제 후 리뷰 로직 추가 필요
   Future<void> removeProfile(String uuid) async {
     await _database.delete(
       "profiles",
@@ -67,16 +86,30 @@ class DatabaseProvider with ChangeNotifier {
     await getProfiles(); // 데이터 변경 후 프로필 목록 업데이트
   }
 
-  Future<void> updateProfile(ProfileSchema profile) async {
-    final data = profile.toMap;
-    await _database.update(
-      "profiles",
-      data,
-      where: "uuid = ?",
-      whereArgs: [profile.uuid],
-    );
-
-    await getProfiles(); // 데이터 변경 후 프로필 목록 업데이트
+  /// # updateProfile
+  /// - [ProfileSchema]를 받아 profiles 테이블에서 해당 데이터를 업데이트합니다.
+  /// - 데이터를 업데이트한 후 프로필 목록을 업데이트합니다.
+  /// TODO: 업데이트 후 리뷰 로직 추가 필요
+  Future<Result<ProfileSchema>> updateProfile(ProfileSchema profile) async {
+    try {
+      final data = profile.toMap;
+      final int result = await _database.update(
+        "profiles",
+        data,
+        where: "uuid = ?",
+        whereArgs: [profile.uuid],
+        conflictAlgorithm: ConflictAlgorithm.abort,
+      );
+      if (result == 0) {
+        throw Exception("No data found with uuid: ${profile.uuid}");
+      }
+      return Result(data: profile);
+    } catch (e) {
+      print(e);
+      return Result(error: e is Exception ? e : Exception(e.toString()));
+    } finally {
+      await getProfiles(); // 데이터 변경 후 프로필 목록 업데이트
+    }
   }
 
   Future<List<Map<String, dynamic>>> query(String table) async {

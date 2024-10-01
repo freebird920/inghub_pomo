@@ -9,23 +9,50 @@ class ModalManager {
   factory ModalManager() => _instance;
 
   ModalManager._internal();
-  void showStatefulBottomSheet(StatefulWidget bottomSheet) {
+
+  Future<T?> showBottomSheetStateful<T>(StatefulWidget statefulWidget) async {
     final thisContext = navigatorKey.currentContext;
     try {
       if (thisContext == null) {
         throw Exception("context is null");
       }
-      showModalBottomSheet(
+      final result = await showModalBottomSheet(
         context: thisContext,
         isScrollControlled: true,
         showDragHandle: true,
-        builder: (context) => bottomSheet, // `StatefulWidget` 사용
+        builder: (context) => statefulWidget, // `StatefulWidget` 사용
+      ).catchError((e) {
+        throw Exception("Error showing bottom sheet: $e");
+      });
+      if (result is! T) {
+        throw Exception("Result type mismatch. Expected type: $T");
+      }
+      return result;
+    } catch (e) {
+      openCompSnackBar(message: e.toString());
+    }
+    return null;
+  }
+
+  Future<T?> showFutureBottomSheetStateful<T>(
+      StatefulWidget statefulWidget) async {
+    final currentContext = navigatorKey.currentContext;
+    try {
+      if (currentContext == null) {
+        throw Exception("context is null");
+      }
+      return await showModalBottomSheet<T>(
+        context: currentContext,
+        isScrollControlled: true,
+        showDragHandle: true,
+        builder: (context) => statefulWidget, // `StatefulWidget` 사용
       ).catchError((e) {
         throw Exception("Error showing bottom sheet: $e");
       });
     } catch (e) {
       openCompSnackBar(message: e.toString());
     }
+    return null;
   }
 
   void showBottomSheet(WidgetBuilder bottomSheet) {

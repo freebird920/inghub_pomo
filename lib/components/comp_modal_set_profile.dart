@@ -1,36 +1,72 @@
 import 'package:flutter/material.dart';
 import 'package:inghub_pomo/managers/snack_bar_manager.dart';
+import 'package:inghub_pomo/providers/sqlite_provider.dart';
 import 'package:inghub_pomo/schema/profile_schema.dart';
+import 'package:provider/provider.dart';
 
-Future<ProfileSchema?> openProfileModal(BuildContext context) async {
-  final result = await showModalBottomSheet(
-    context: context,
-    isScrollControlled: true, // 키보드가 올라올 때 스크롤 조절
-    builder: (context) => const SetProfileBox(),
-  );
-  if (result != null) {
-    SnackBarManager().showSimpleSnackBar("프로필 추가 완료");
-  }
-  return result;
-}
+/// # [Future<String>?] SetProfileModal
+/// - 프로필 추가 모달
+/// ### @params
+/// - [ProfileSchema] profile: 수정할 프로필 정보
+///   - 만약 profile이 존재하면 해당 프로필을 수정합니다.
+///   - 만약 profile이 null이면 새로운 프로필을 추가합니다.
+/// ### @return
+/// - [String] profile.uuid
+///   - 프로필 추가/수정 성공 시 프로필의 uuid를 반환합니다.
+class SetProfileModal extends StatefulWidget {
+  const SetProfileModal({
+    super.key,
+    this.profile,
+  });
 
-class SetProfileBox extends StatefulWidget {
-  const SetProfileBox({super.key});
+  final ProfileSchema? profile;
 
   @override
-  _SetProfileBoxState createState() => _SetProfileBoxState();
+  SetProfileModalState createState() => SetProfileModalState();
 }
 
-class _SetProfileBoxState extends State<SetProfileBox> {
+class SetProfileModalState extends State<SetProfileModal> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  final TextEditingController profileNameController = TextEditingController();
-  final TextEditingController descriptionController = TextEditingController();
+  late TextEditingController profileNameController = TextEditingController();
+  late TextEditingController descriptionController = TextEditingController();
+
+  late SqliteProvider _databaseProvider;
+  late ProfileSchema? _targetProfile;
+
+  void insertProfile(ProfileSchema profile) {
+    _databaseProvider.insertProfile(profile);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    profileNameController = TextEditingController();
+    descriptionController = TextEditingController();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _databaseProvider = Provider.of<SqliteProvider>(context);
+    _targetProfile = widget.profile;
+    if (_targetProfile != null) {
+      profileNameController.text = _targetProfile!.profileName;
+      descriptionController.text = _targetProfile!.description ?? "";
+    }
+  }
+
+  @override
+  void dispose() {
+    profileNameController.dispose();
+    descriptionController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return FractionallySizedBox(
-      heightFactor: 0.95,
-      widthFactor: 0.9,
+      // heightFactor: 0.95,
+      // widthFactor: 0.9,
       child: SingleChildScrollView(
         // 키보드 열릴 때 화면 조정
         child: Padding(
@@ -39,14 +75,13 @@ class _SetProfileBoxState extends State<SetProfileBox> {
           ),
           child: Form(
             key: formKey,
-            child: ListView(
-              shrinkWrap: true, // 높이를 내용에 맞게 줄임
+            child: Column(
               children: [
-                const ListTile(
+                ListTile(
                   title: Text(
-                    "프로필 추가",
+                    "${_targetProfile == null ? "ㅇㅋ" : "수정"}프로필 추가",
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
@@ -72,9 +107,12 @@ class _SetProfileBoxState extends State<SetProfileBox> {
                 ),
                 ListTile(
                   title: TextFormField(
+                    onChanged: null,
                     decoration: const InputDecoration(
                       labelText: "Description",
                     ),
+                    minLines: 1,
+                    maxLines: null,
                     controller: descriptionController,
                   ),
                 ),
@@ -93,12 +131,20 @@ class _SetProfileBoxState extends State<SetProfileBox> {
                         return;
                       }
                       ProfileSchema profile = ProfileSchema(
+                        uuid: _targetProfile?.uuid,
                         profileName: profileNameController.text,
-                        description: descriptionController.text,
+                        description: descriptionController.text.isEmpty
+                            ? null
+                            : descriptionController.text,
                         created: DateTime.now(),
                         updated: DateTime.now(),
                       );
-                      Navigator.of(context).pop<ProfileSchema>(profile);
+                      if (_targetProfile != null) {
+                        _databaseProvider.updateProfile(profile);
+                      } else {
+                        _databaseProvider.insertProfile(profile);
+                      }
+                      Navigator.of(context).pop<String>(profile.uuid);
                     },
                     child: const Text("추가"),
                   ),
@@ -109,12 +155,5 @@ class _SetProfileBoxState extends State<SetProfileBox> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    profileNameController.dispose();
-    descriptionController.dispose();
-    super.dispose();
   }
 }

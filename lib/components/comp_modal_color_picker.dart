@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:inghub_pomo/app/utils/keys.dart';
 import 'package:inghub_pomo/components/comp_snack_bar.dart';
-import 'package:inghub_pomo/providers/preference_provider.dart';
+import 'package:inghub_pomo/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 
 void openThemeColorSeedPicker() {
@@ -43,14 +43,13 @@ class CompModalColorPicker extends StatefulWidget {
 }
 
 class _CompModalColorPickerState extends State<CompModalColorPicker> {
-  late PreferenceProvider preferenceProvider;
+  late ThemeProvider themeProvider;
   late Color pickerColor;
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    preferenceProvider = Provider.of<PreferenceProvider>(context);
-    pickerColor = Color(
-        preferenceProvider.getPrefInt("theme_color") ?? Colors.indigo.value);
+    themeProvider = Provider.of<ThemeProvider>(context);
+    pickerColor = themeProvider.themeColor;
   }
 
   @override
@@ -71,10 +70,8 @@ class _CompModalColorPickerState extends State<CompModalColorPicker> {
         TextButton(
           child: const Text("Select"),
           onPressed: () {
-            preferenceProvider.setPrefInt(
-              key: "theme_color",
-              value: pickerColor.value,
-            );
+            themeProvider.setThemeColor(pickerColor);
+
             Navigator.of(context).pop();
           },
         ),
