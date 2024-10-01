@@ -118,35 +118,46 @@ class SetProfileModalState extends State<SetProfileModal> {
                 ),
                 const Divider(),
                 ListTile(
-                  title: TextButton(
-                    onPressed: () {
-                      if (formKey.currentState == null) {
-                        SnackBarManager()
-                            .showSimpleSnackBar("formKey.currentState is null");
-                        return;
-                      }
-                      if (!formKey.currentState!.validate()) {
-                        SnackBarManager()
-                            .showSimpleSnackBar("프로필 이름을 입력하지 않았습니다.");
-                        return;
-                      }
-                      ProfileSchema profile = ProfileSchema(
-                        uuid: _targetProfile?.uuid,
-                        profileName: profileNameController.text,
-                        description: descriptionController.text.isEmpty
-                            ? null
-                            : descriptionController.text,
-                        created: DateTime.now(),
-                        updated: DateTime.now(),
-                      );
-                      if (_targetProfile != null) {
-                        _databaseProvider.updateProfile(profile);
-                      } else {
-                        _databaseProvider.insertProfile(profile);
-                      }
-                      Navigator.of(context).pop<String>(profile.uuid);
-                    },
-                    child: const Text("추가"),
+                  title: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          if (formKey.currentState == null) {
+                            SnackBarManager().showSimpleSnackBar(
+                                "formKey.currentState is null");
+                            return;
+                          }
+                          if (!formKey.currentState!.validate()) {
+                            SnackBarManager()
+                                .showSimpleSnackBar("프로필 이름을 입력하지 않았습니다.");
+                            return;
+                          }
+                          ProfileSchema profile = ProfileSchema(
+                            uuid: _targetProfile?.uuid,
+                            profileName: profileNameController.text,
+                            description: descriptionController.text.isEmpty
+                                ? null
+                                : descriptionController.text,
+                            created: DateTime.now(),
+                            updated: DateTime.now(),
+                          );
+                          if (_targetProfile != null) {
+                            _databaseProvider.updateProfile(profile);
+                          } else {
+                            _databaseProvider.insertProfile(profile);
+                          }
+                          Navigator.of(context).pop<String>(profile.uuid);
+                        },
+                        child: const Text("추가"),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop<String?>(null);
+                        },
+                        child: const Text("취소"),
+                      )
+                    ],
                   ),
                 ),
               ],
