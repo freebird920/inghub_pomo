@@ -92,7 +92,6 @@ class SqliteProvider with ChangeNotifier {
   /// # updateProfile
   /// - [ProfileSchema]를 받아 profiles 테이블에서 해당 데이터를 업데이트합니다.
   /// - 데이터를 업데이트한 후 프로필 목록을 업데이트합니다.
-  /// TODO: 업데이트 후 리뷰 로직 추가 필요
   Future<Result<ProfileSchema>> updateProfile(ProfileSchema profile) async {
     try {
       final data = profile.toMap;
@@ -108,7 +107,6 @@ class SqliteProvider with ChangeNotifier {
       }
       return Result(data: profile);
     } catch (e) {
-      print(e);
       return Result(error: e is Exception ? e : Exception(e.toString()));
     } finally {
       await getProfiles(); // 데이터 변경 후 프로필 목록 업데이트
