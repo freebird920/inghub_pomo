@@ -149,7 +149,7 @@ class SetProfileModalState extends State<SetProfileModal> {
                           }
                           Navigator.of(context).pop<String>(profile.uuid);
                         },
-                        child: const Text("추가"),
+                        child: const Text("확인"),
                       ),
                       TextButton(
                         onPressed: () {

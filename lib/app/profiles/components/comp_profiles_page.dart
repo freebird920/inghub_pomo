@@ -149,17 +149,78 @@ class _CompProfilesPageState extends State<CompProfilesPage> {
               ),
             ],
           ),
-          trailing: IconButton(
-            icon: const Icon(Icons.delete),
-            onPressed: () {
-              if (_profileProvider.currentProfileUuid == profile.uuid) {
-                _profileProvider.removeCurrentProfileUuid();
-              }
-              _sqliteProvider.removeProfile(profile.uuid);
-            },
+          trailing: ProfilePopupMenuButton(
+            profile: profile,
           ),
+
+          // trailing: IconButton(
+          //   icon: const Icon(Icons.delete),
+          //   onPressed: () {
+          //     if (_profileProvider.currentProfileUuid == profile.uuid) {
+          //       _profileProvider.removeCurrentProfileUuid();
+          //     }
+          //     _sqliteProvider.removeProfile(profile.uuid);
+          //   },
+          // ),
         );
       },
     ));
+  }
+}
+
+enum ProfilePopupMenuButtonEnum {
+  edit,
+  delete,
+}
+
+class ProfilePopupMenuButton extends StatelessWidget {
+  const ProfilePopupMenuButton({
+    super.key,
+    required this.profile,
+  });
+  final ProfileSchema profile;
+  @override
+  Widget build(BuildContext context) {
+    final ProfileProvider profileProvider =
+        Provider.of<ProfileProvider>(context);
+    final SqliteProvider sqliteProvider = Provider.of<SqliteProvider>(context);
+    return PopupMenuButton<ProfilePopupMenuButtonEnum>(
+      icon: const Icon(Icons.more_vert), // 여기에 원하는 아이콘 넣으면 됨
+      onSelected: (value) {
+        switch (value) {
+          case ProfilePopupMenuButtonEnum.edit:
+            ModalManager().showBottomSheetStateful<String?>(
+              SetProfileModal(
+                profile: profile,
+              ),
+            );
+            break;
+          case ProfilePopupMenuButtonEnum.delete:
+            if (profileProvider.currentProfileUuid == profile.uuid) {
+              profileProvider.removeCurrentProfileUuid();
+            }
+            sqliteProvider.removeProfile(profile.uuid);
+            break;
+        }
+      },
+      itemBuilder: (BuildContext context) =>
+          <PopupMenuEntry<ProfilePopupMenuButtonEnum>>[
+        const PopupMenuItem<ProfilePopupMenuButtonEnum>(
+          value: ProfilePopupMenuButtonEnum.edit,
+          child: Text('수정'),
+        ),
+        const PopupMenuItem<ProfilePopupMenuButtonEnum>(
+            value: ProfilePopupMenuButtonEnum.delete,
+            labelTextStyle: WidgetStatePropertyAll(
+              TextStyle(
+                fontFamily: "NotoSansKR",
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+                color: Colors.red,
+              ),
+            ),
+            child: Text("삭제")),
+      ],
+    );
   }
 }
