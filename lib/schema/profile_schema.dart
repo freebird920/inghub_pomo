@@ -5,9 +5,10 @@ class ProfileSchema {
   final String uuid;
   String profileName;
   String? description;
-  String? currentPomo;
   DateTime created; // Flutter에서는 DateTime 사용
   DateTime updated;
+  String? currentPomo;
+  String? currentPreset;
 
   // Uuid 인스턴스 생성
   static const Uuid _uuid = Uuid();
@@ -19,6 +20,7 @@ class ProfileSchema {
     required this.updated,
     this.description,
     this.currentPomo,
+    this.currentPreset,
   }) : uuid = uuid ?? _uuid.v4(); // uuid가 없을 경우 자동 생성
 
   // 객체를 맵으로 변환
@@ -27,9 +29,10 @@ class ProfileSchema {
       "uuid": uuid,
       "profileName": profileName,
       "description": description,
-      "currentPomo": currentPomo,
       "created": created.toIso8601String(), // DateTime을 TEXT로 변환
       "updated": updated.toIso8601String(),
+      "currentPomo": currentPomo,
+      "currentPreset": currentPreset,
     };
   }
 
@@ -38,10 +41,11 @@ class ProfileSchema {
     return ProfileSchema(
       uuid: map["uuid"],
       profileName: map["profileName"],
-      currentPomo: map["currentPomo"],
       description: map["description"],
       created: DateTime.parse(map["created"]), // TEXT를 DateTime으로 변환
       updated: DateTime.parse(map["updated"]),
+      currentPomo: map["currentPomo"],
+      currentPreset: map["currentPreset"],
     );
   }
 
@@ -52,9 +56,10 @@ class ProfileSchema {
           "uuid": "TEXT PRIMARY KEY",
           "profileName": "TEXT NOT NULL",
           "description": "TEXT",
-          "currentPomo": "TEXT",
           "created": "TEXT NOT NULL",
           "updated": "TEXT NOT NULL",
+          "currentPomo": "TEXT",
+          "currentPreset": "TEXT",
         },
       );
 }

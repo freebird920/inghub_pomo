@@ -3,9 +3,9 @@ import 'package:uuid/uuid.dart';
 
 class PomoSchema {
   final String uuid;
-  String profileName;
+  String pomoName;
+  String profileUuid;
   String? description;
-  final String? currentPomo;
   DateTime created; // Flutter에서는 DateTime 사용
   DateTime updated;
 
@@ -14,20 +14,20 @@ class PomoSchema {
 
   PomoSchema({
     String? uuid, // uuid는 선택적 파라미터
-    required this.profileName,
+    required this.profileUuid,
     required this.created,
     required this.updated,
     this.description,
-    this.currentPomo,
+    required this.pomoName,
   }) : uuid = uuid ?? _uuid.v4(); // uuid가 없을 경우 자동 생성
 
   // 객체를 맵으로 변환
   Map<String, dynamic> get toMap {
     return {
       "uuid": uuid,
-      "profileName": profileName,
+      "profileName": profileUuid,
       "description": description,
-      "currentPomo": currentPomo,
+      "currentPomo": pomoName,
       "created": created.toIso8601String(), // DateTime을 TEXT로 변환
       "updated": updated.toIso8601String(),
     };
@@ -37,8 +37,8 @@ class PomoSchema {
   factory PomoSchema.fromMap(Map<String, dynamic> map) {
     return PomoSchema(
       uuid: map["uuid"],
-      profileName: map["profileName"],
-      currentPomo: map["currentPomo"],
+      profileUuid: map["profileName"],
+      pomoName: map["currentPomo"],
       description: map["description"],
       created: DateTime.parse(map["created"]), // TEXT를 DateTime으로 변환
       updated: DateTime.parse(map["updated"]),
