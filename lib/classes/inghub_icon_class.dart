@@ -11,6 +11,9 @@ class InghubIconClass {
     const Icon(Icons.bed_outlined),
     const Icon(Icons.android_outlined),
     const Icon(Icons.hardware),
+    const Icon(Icons.headset),
+    const Icon(Icons.laptop),
+    const Icon(Icons.face),
 
     // 원하는 아이콘을 추가하면 됨
   ];

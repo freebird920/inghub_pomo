@@ -5,11 +5,11 @@ import 'package:uuid/uuid.dart';
 
 class PomoTypeSchema {
   final String uuid;
+  final bool isDefault;
   String typeName;
   String? description;
   int iconCodePoint;
   int runningTime; // Flutter에서는 DateTime 사용
-  bool? isDefault;
 
   // Uuid 인스턴스 생성
   static const Uuid _uuid = Uuid();
@@ -18,14 +18,14 @@ class PomoTypeSchema {
   /// - [uuid] UUid
   /// - [typeName]은 필수 파라미터
   /// - [runningTime] 초 단위!
-  PomoTypeSchema(
-      {String? uuid, // uuid는 선택적 파라미터
-      required this.typeName,
-      required this.runningTime,
-      this.description,
-      this.iconCodePoint = 0xe046,
-      this.isDefault})
-      : uuid = uuid ?? _uuid.v4(); // uuid가 없을 경우 자동 생성
+  PomoTypeSchema({
+    String? uuid, // uuid는 선택적 파라미터
+    required this.typeName,
+    required this.runningTime,
+    this.description,
+    this.iconCodePoint = 0xe046,
+    this.isDefault = false,
+  }) : uuid = uuid ?? _uuid.v4(); // uuid가 없을 경우 자동 생성
 
   // 객체를 맵으로 변환
   Map<String, dynamic> get toMap {

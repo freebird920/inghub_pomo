@@ -50,8 +50,21 @@ class SqliteService {
 
   Future<void> _onCreate(Database database, int version) async {
     final db = database;
+    LogService().log("Creating tables");
     await db.execute(ProfileSchema.schema.generateCreateTableSQL());
     await db.execute(PomoTypeSchema.schema.generateCreateTableSQL());
+    final data = PomoTypeSchema.defaultPomoTypes;
+    for (final item in data) {
+      try {
+        await db.insert(
+          "pomoTypes",
+          item.toMap,
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      } catch (e) {
+        LogService().log(e.toString());
+      }
+    }
   }
 
   Future<User> insertUSer(User user) async {

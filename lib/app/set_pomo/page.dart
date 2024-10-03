@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:inghub_pomo/app/set_pomo/components/modal_set_pomo_type.dart';
+import 'package:inghub_pomo/app/set_pomo/components/popup_menu_pomo_type.dart';
 import 'package:inghub_pomo/classes/inghub_icon_class.dart';
 import 'package:inghub_pomo/components/comp_navbar.dart';
 import 'package:inghub_pomo/managers/modal_manager.dart';
 import 'package:inghub_pomo/providers/sqlite_provider.dart';
-import 'package:inghub_pomo/schema/pomo_type_schema.dart';
 import 'package:provider/provider.dart';
 
 class SetPomoPage extends StatelessWidget {
@@ -65,25 +66,10 @@ class _SetPomoTypeBoxState extends State<SetPomoTypeBox> {
         child: Column(
           children: [
             TextButton(
-                onPressed: () async {
-                  for (var element in PomoTypeSchema.defaultPomoTypes) {
-                    await _sqliteProvider.insertPomoType(
-                      element,
-                    );
-                  }
-                },
-                child: const Text("기본추가요")),
-            TextButton(
               onPressed: () async {
-                for (var element in PomoTypeSchema.defaultPomoTypes) {
-                  final result = await _sqliteProvider.insertPomoType(element);
-                  if (result.error != null) {
-                    // 에러 처리
-                    print("Error inserting PomoType: ${result.error}");
-                  }
-                }
+                ModalManager().showAlertDialog(const ModalSetPomoType());
               },
-              child: const Text("기본추가요2"),
+              child: const Text("뽀모도로 타입 추가 모달 열기"),
             ),
             Expanded(
               child: _sqliteProvider.pomoTypes != null &&
@@ -92,15 +78,18 @@ class _SetPomoTypeBoxState extends State<SetPomoTypeBox> {
                       itemCount: _sqliteProvider.pomoTypes!.length,
                       itemBuilder: (context, index) {
                         final pomoType = _sqliteProvider.pomoTypes?[index];
-                        final Icon myIcon = InghubIconClass.fromCodePoint(
+                        Icon myIcon = InghubIconClass.fromCodePoint(
                                 pomoType!.iconCodePoint)
                             .icon;
+
                         return ListTile(
+                          trailing: PopupMenuPomoType(pomoType: pomoType),
                           leading: myIcon,
-                          title: Text("Pomo Type $index"),
+                          title: Text(
+                            '${pomoType.typeName}${pomoType.isDefault ? "*" : ""} ${pomoType.runningTime ~/ 60}분',
+                          ),
                           subtitle: Text(
-                            _sqliteProvider.pomoTypes?[index].typeName ??
-                                "No Data",
+                            _sqliteProvider.pomoTypes?[index].description ?? "",
                           ),
                         );
                       },
