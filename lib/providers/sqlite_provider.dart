@@ -179,6 +179,7 @@ class SqliteProvider with ChangeNotifier {
       }
       return Result(data: pomoType);
     } catch (e) {
+      LogService().log("updatePomoType error: $e");
       return Result(error: e is Exception ? e : Exception(e.toString()));
     } finally {
       await getPomoTypes(); // 데이터 변경 후 프로필 목록 업데이트

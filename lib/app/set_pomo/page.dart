@@ -67,7 +67,9 @@ class _SetPomoTypeBoxState extends State<SetPomoTypeBox> {
           children: [
             TextButton(
               onPressed: () async {
-                ModalManager().showAlertDialog(const ModalSetPomoType());
+                ModalManager().showAlertDialog(
+                  const ModalSetPomoType(),
+                );
               },
               child: const Text("뽀모도로 타입 추가 모달 열기"),
             ),

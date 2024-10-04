@@ -6,7 +6,12 @@ import 'package:inghub_pomo/schema/pomo_type_schema.dart';
 import 'package:provider/provider.dart';
 
 class ModalSetPomoType extends StatefulWidget {
-  const ModalSetPomoType({super.key});
+  const ModalSetPomoType({
+    super.key,
+    this.currentPomoType,
+  });
+
+  final PomoTypeSchema? currentPomoType;
 
   @override
   State<ModalSetPomoType> createState() => _ModalSetPomoTypeState();
@@ -21,6 +26,8 @@ class _ModalSetPomoTypeState extends State<ModalSetPomoType> {
   late SqliteProvider _sqliteProvider;
   late Function _navigatorPop;
 
+  late VoidCallback _submitFuntion;
+
   Icon? _selectedIcon;
 
   @override
@@ -28,6 +35,48 @@ class _ModalSetPomoTypeState extends State<ModalSetPomoType> {
     super.didChangeDependencies();
     _sqliteProvider = Provider.of<SqliteProvider>(context);
     _navigatorPop = Navigator.of(context).pop;
+    if (widget.currentPomoType != null) {
+      _nameController.text = widget.currentPomoType!.typeName;
+      _runningTimeController.text =
+          ((widget.currentPomoType!.runningTime ~/ 60)).toString();
+      _descriptionController.text = widget.currentPomoType!.description ?? "";
+      _selectedIcon = Icon(
+        IconData(widget.currentPomoType!.iconCodePoint,
+            fontFamily: "MaterialIcons"),
+      );
+      _submitFuntion = () async {
+        if (_formKey.currentState!.validate()) {
+          final pomoType = PomoTypeSchema(
+            uuid: widget.currentPomoType!.uuid,
+            typeName: _nameController.text,
+            runningTime: int.parse(_runningTimeController.text) * 60,
+            description: _descriptionController.text.isNotEmpty
+                ? _descriptionController.text
+                : null,
+            iconCodePoint:
+                _selectedIcon?.icon?.codePoint ?? Icons.face.codePoint,
+          );
+          await _sqliteProvider.updatePomoType(pomoType);
+          _navigatorPop();
+        }
+      };
+    } else {
+      _submitFuntion = () async {
+        if (_formKey.currentState!.validate()) {
+          final pomoType = PomoTypeSchema(
+            typeName: _nameController.text,
+            runningTime: int.parse(_runningTimeController.text) * 60,
+            description: _descriptionController.text.isNotEmpty
+                ? _descriptionController.text
+                : null,
+            iconCodePoint:
+                _selectedIcon?.icon?.codePoint ?? Icons.face.codePoint,
+          );
+          await _sqliteProvider.insertPomoType(pomoType);
+          _navigatorPop();
+        }
+      };
+    }
   }
 
   @override
@@ -41,13 +90,17 @@ class _ModalSetPomoTypeState extends State<ModalSetPomoType> {
   Widget build(BuildContext context) {
     return AlertDialog(
       scrollable: true,
-      title: const Text("뽀모도로 타입 설정"),
+      title: Text(
+        "뽀모도로 타입 ${widget.currentPomoType != null ? "수정" : "추가"}",
+        textAlign: TextAlign.center,
+      ),
       content: Form(
         key: _formKey,
         child: Column(
           children: [
             TextFormField(
               controller: _nameController,
+              autofocus: true,
               validator: (value) => value!.isEmpty ? "이름을 입력해주세요" : null,
               decoration: const InputDecoration(
                 hintText: "이름을 입력해주세요",
@@ -111,23 +164,7 @@ class _ModalSetPomoTypeState extends State<ModalSetPomoType> {
         ),
       ),
       actions: [
-        TextButton(
-            onPressed: () async {
-              if (_formKey.currentState!.validate()) {
-                final pomoType = PomoTypeSchema(
-                  typeName: _nameController.text,
-                  runningTime: int.parse(_runningTimeController.text) * 60,
-                  description: _descriptionController.text.isNotEmpty
-                      ? _descriptionController.text
-                      : null,
-                  iconCodePoint:
-                      _selectedIcon?.icon?.codePoint ?? Icons.face.codePoint,
-                );
-                await _sqliteProvider.insertPomoType(pomoType);
-                _navigatorPop();
-              }
-            },
-            child: const Text("Save")),
+        TextButton(onPressed: _submitFuntion, child: const Text("Save")),
         TextButton(
           onPressed: () {
             Navigator.of(context).pop();

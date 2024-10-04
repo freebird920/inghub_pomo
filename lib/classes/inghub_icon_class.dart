@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class InghubIconClass {
@@ -14,6 +15,7 @@ class InghubIconClass {
     const Icon(Icons.headset),
     const Icon(Icons.laptop),
     const Icon(Icons.face),
+    const Icon(CupertinoIcons.moon_stars_fill),
 
     // 원하는 아이콘을 추가하면 됨
   ];

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:inghub_pomo/app/set_pomo/components/modal_set_pomo_type.dart';
 import 'package:inghub_pomo/classes/inghub_icon_class.dart';
 import 'package:inghub_pomo/managers/modal_manager.dart';
 import 'package:inghub_pomo/managers/snack_bar_manager.dart';
@@ -25,6 +26,11 @@ class PopupMenuPomoType extends StatelessWidget {
       onSelected: (value) {
         switch (value) {
           case PomoTypePopupMenuButtonEnum.edit:
+            ModalManager().showAlertDialog(
+              ModalSetPomoType(
+                currentPomoType: pomoType,
+              ),
+            );
             break;
           case PomoTypePopupMenuButtonEnum.delete:
             ModalManager().showAlertDialog(
