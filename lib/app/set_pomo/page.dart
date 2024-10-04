@@ -5,6 +5,7 @@ import 'package:inghub_pomo/classes/inghub_icon_class.dart';
 import 'package:inghub_pomo/components/comp_navbar.dart';
 import 'package:inghub_pomo/managers/modal_manager.dart';
 import 'package:inghub_pomo/schema/pomo_type_schema.dart';
+import 'package:uuid/uuid.dart';
 
 class SetPomoPage extends StatelessWidget {
   const SetPomoPage({super.key});
@@ -54,7 +55,20 @@ class _PomoSequenceListState extends State<PomoSequenceList> {
   Widget build(BuildContext context) {
     return Expanded(
       child: ReorderableListView.builder(
-        itemCount: (_pomoSequence.length + 1),
+        itemCount: (_pomoSequence.length),
+        shrinkWrap: true,
+        footer: ListTile(
+          key: const ValueKey("add"),
+          title: const Text("추가"),
+          onTap: () async {
+            final PomoTypeSchema? result = await ModalManager()
+                .showBottomSheetWidget(const CompPomoType());
+            if (result == null) return;
+            setState(() {
+              _pomoSequence.add(result);
+            });
+          },
+        ),
         onReorder: (int oldIndex, int newIndex) {
           setState(() {
             if (newIndex > oldIndex) {
@@ -65,24 +79,11 @@ class _PomoSequenceListState extends State<PomoSequenceList> {
           });
         },
         itemBuilder: (context, index) {
-          if (index == _pomoSequence.length) {
-            return ListTile(
-              key: const ValueKey("add"),
-              title: const Text("추가"),
-              onTap: () async {
-                final PomoTypeSchema? result =
-                    await ModalManager().showAlertDialog(
-                  const CompPomoType(),
-                );
-                if (result != null) return;
-                setState(() {
-                  _pomoSequence.add(result!);
-                });
-              },
-            );
-          }
+          final myKey = const Uuid().v4();
           return ListTile(
-            key: ValueKey(_pomoSequence[index].uuid), // 고유 키 필요
+            key: ValueKey(myKey), // 고유 키 필요
+
+            subtitle: Text("${_pomoSequence[index].runningTime}분"),
             leading: InghubIconClass.fromCodePoint(
               _pomoSequence[index].iconCodePoint,
             ).icon,
