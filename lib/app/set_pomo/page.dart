@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:inghub_pomo/app/set_pomo/components/modal_pomo_type.dart';
 import 'package:inghub_pomo/app/set_pomo/components/modal_set_pomo_type.dart';
-import 'package:inghub_pomo/app/set_pomo/components/popup_menu_pomo_type.dart';
 import 'package:inghub_pomo/classes/inghub_icon_class.dart';
 import 'package:inghub_pomo/components/comp_navbar.dart';
 import 'package:inghub_pomo/managers/modal_manager.dart';
-import 'package:inghub_pomo/providers/sqlite_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:inghub_pomo/schema/pomo_type_schema.dart';
 
 class SetPomoPage extends StatelessWidget {
   const SetPomoPage({super.key});
@@ -20,21 +19,18 @@ class SetPomoPage extends StatelessWidget {
             icon: const Icon(Icons.settings),
             onPressed: () {
               ModalManager().showBottomSheetWidget(
-                const SetPomoTypeBox(),
+                const CompPomoType(),
               );
             },
           ),
         ],
       ),
       bottomNavigationBar: const CompNavbar(),
-      body: Center(
+      body: const Center(
         child: Column(
           children: [
-            const Text("Pomo 설정 페이지"),
-            ElevatedButton(
-              onPressed: () {},
-              child: const Text("돌아가기"),
-            ),
+            Text("Pomo 설정 페이지"),
+            PomoSequenceList(),
           ],
         ),
       ),
@@ -42,66 +38,70 @@ class SetPomoPage extends StatelessWidget {
   }
 }
 
-class SetPomoTypeBox extends StatefulWidget {
-  const SetPomoTypeBox({
+class PomoSequenceList extends StatefulWidget {
+  const PomoSequenceList({
     super.key,
   });
 
   @override
-  State<SetPomoTypeBox> createState() => _SetPomoTypeBoxState();
+  State<PomoSequenceList> createState() => _PomoSequenceListState();
 }
 
-class _SetPomoTypeBoxState extends State<SetPomoTypeBox> {
-  late SqliteProvider _sqliteProvider;
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _sqliteProvider = Provider.of<SqliteProvider>(context);
-  }
+class _PomoSequenceListState extends State<PomoSequenceList> {
+  final List<PomoTypeSchema> _pomoSequence = [];
 
   @override
   Widget build(BuildContext context) {
-    return FractionallySizedBox(
-      child: Center(
-        child: Column(
-          children: [
-            TextButton(
-              onPressed: () async {
-                ModalManager().showAlertDialog(
-                  const ModalSetPomoType(),
+    return Expanded(
+      child: ReorderableListView.builder(
+        itemCount: (_pomoSequence.length + 1),
+        onReorder: (int oldIndex, int newIndex) {
+          setState(() {
+            if (newIndex > oldIndex) {
+              newIndex -= 1;
+            }
+            final item = _pomoSequence.removeAt(oldIndex);
+            _pomoSequence.insert(newIndex, item);
+          });
+        },
+        itemBuilder: (context, index) {
+          if (index == _pomoSequence.length) {
+            return ListTile(
+              key: const ValueKey("add"),
+              title: const Text("추가"),
+              onTap: () async {
+                final PomoTypeSchema? result =
+                    await ModalManager().showAlertDialog(
+                  const CompPomoType(),
                 );
+                if (result != null) return;
+                setState(() {
+                  _pomoSequence.add(result!);
+                });
               },
-              child: const Text("뽀모도로 타입 추가 모달 열기"),
+            );
+          }
+          return ListTile(
+            key: ValueKey(_pomoSequence[index].uuid), // 고유 키 필요
+            leading: InghubIconClass.fromCodePoint(
+              _pomoSequence[index].iconCodePoint,
+            ).icon,
+            title: Text(_pomoSequence[index].typeName),
+            trailing: IconButton(
+              icon: const Icon(Icons.delete),
+              onPressed: () {
+                setState(() {
+                  _pomoSequence.removeAt(index);
+                });
+              },
             ),
-            Expanded(
-              child: _sqliteProvider.pomoTypes != null &&
-                      _sqliteProvider.pomoTypes!.isNotEmpty
-                  ? ListView.builder(
-                      itemCount: _sqliteProvider.pomoTypes!.length,
-                      itemBuilder: (context, index) {
-                        final pomoType = _sqliteProvider.pomoTypes?[index];
-                        Icon myIcon = InghubIconClass.fromCodePoint(
-                                pomoType!.iconCodePoint)
-                            .icon;
-
-                        return ListTile(
-                          trailing: PopupMenuPomoType(pomoType: pomoType),
-                          leading: myIcon,
-                          title: Text(
-                            '${pomoType.typeName}${pomoType.isDefault ? "*" : ""} ${pomoType.runningTime ~/ 60}분',
-                          ),
-                          subtitle: Text(
-                            _sqliteProvider.pomoTypes?[index].description ?? "",
-                          ),
-                        );
-                      },
-                    )
-                  : const Center(
-                      child: Text("No Pomo Types found"),
-                    ),
-            ),
-          ],
-        ),
+            onTap: () {
+              ModalManager().showAlertDialog(
+                const ModalSetPomoType(),
+              );
+            },
+          );
+        },
       ),
     );
   }
