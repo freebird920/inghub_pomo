@@ -18,7 +18,7 @@ class ProfilesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("프로필 설정"),
+        title: const Text("프로필 선택"),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),

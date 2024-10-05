@@ -31,10 +31,10 @@ void main() async {
 
   await LogService().log("App started");
 
+  final ProfileProvider profileProvider = ProfileProvider();
   final SqliteProvider databaseProvider = SqliteProvider();
   final ThemeProvider themeProvider = ThemeProvider();
   final VersionProvider versionProvider = VersionProvider();
-  final ProfileProvider profileProvider = ProfileProvider();
 
   await Future.wait(
     [

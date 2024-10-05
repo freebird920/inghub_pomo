@@ -48,13 +48,22 @@ class SqliteService {
     }
   }
 
+  /// # _onCreate
+  /// - 데이터베이스 생성 시 호출되는 메서드
+  /// - 데이터베이스에 테이블을 생성하고 초기 데이터를 삽입한다.
+  /// - [database]: 데이터베이스 인스턴스
+  /// - [version]: 데이터베이스 버전
   Future<void> _onCreate(Database database, int version) async {
     final db = database;
     LogService().log("Creating tables");
-    await db.execute(ProfileSchema.schema.generateCreateTableSQL());
-    await db.execute(PomoTypeSchema.schema.generateCreateTableSQL());
-    final data = PomoTypeSchema.defaultPomoTypes;
-    for (final item in data) {
+    await db
+        .execute(ProfileSchema.schema.generateCreateTableSQL()); // 프로필 테이블 생성
+    await db.execute(
+        PomoTypeSchema.schema.generateCreateTableSQL()); // 포모 타입 테이블 생성
+
+    // 초기 pomoType 데이터 삽입
+    final defaultPomoTypes = PomoTypeSchema.defaultPomoTypes;
+    for (final item in defaultPomoTypes) {
       try {
         await db.insert(
           "pomoTypes",
@@ -64,6 +73,18 @@ class SqliteService {
       } catch (e) {
         LogService().log(e.toString());
       }
+    }
+
+    // 초기 프로필 데이터 삽입
+    final defaultProfile = ProfileSchema.generateDefault();
+    try {
+      await db.insert(
+        "profiles",
+        defaultProfile.toMap,
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    } catch (e) {
+      LogService().log(e.toString());
     }
   }
 

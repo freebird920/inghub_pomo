@@ -23,7 +23,7 @@ class PomoSequenceSchema {
     };
   }
 
-  String get pomoTypesJson {
+  String get toJson {
     return jsonEncode(
       pomoTypes
           .map(
