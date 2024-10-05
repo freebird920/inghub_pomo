@@ -7,9 +7,7 @@ class PreferenceService {
   static final PreferenceService _instance =
       PreferenceService._privateConstructor();
 
-  factory PreferenceService() {
-    return _instance;
-  }
+  factory PreferenceService() => _instance;
 
   SharedPreferences? _prefs;
   SharedPreferences? get prefs => _prefs;

@@ -12,9 +12,7 @@ class FileService {
   static final FileService _instance = FileService._privateConstructor();
 
   // 3. 외부에서 접근할 수 있는 인스턴스 제공자
-  factory FileService() {
-    return _instance;
-  }
+  factory FileService() => _instance;
   final bool _isInit = false;
   bool get isInit => _isInit;
   // _localSaperator 변수 설정
