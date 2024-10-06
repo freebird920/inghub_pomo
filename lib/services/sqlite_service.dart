@@ -3,6 +3,7 @@ import 'package:inghub_pomo/schema/pomo_type_schema.dart';
 import 'package:inghub_pomo/schema/profile_schema.dart';
 import 'package:inghub_pomo/services/file_service.dart';
 import 'package:inghub_pomo/services/log_service.dart';
+import 'package:inghub_pomo/services/preference_service.dart';
 import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -78,11 +79,18 @@ class SqliteService {
     // 초기 프로필 데이터 삽입
     final defaultProfile = ProfileSchema.generateDefault();
     try {
-      await db.insert(
+      final defaultProfileResult = await db.insert(
         "profiles",
         defaultProfile.toMap,
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
+      if (defaultProfileResult >= 0) {
+        LogService().log("Default profile inserted");
+        PreferenceService().setPrefString(
+          key: "current_profile_uuid",
+          value: defaultProfile.uuid,
+        );
+      }
     } catch (e) {
       LogService().log(e.toString());
     }

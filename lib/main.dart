@@ -27,18 +27,19 @@ void main() async {
   ]);
 
   // 프로바이더 선언 및 초기화
-  // TODO:
-
   await LogService().log("App started");
 
-  final ProfileProvider profileProvider = ProfileProvider();
   final SqliteProvider databaseProvider = SqliteProvider();
+  final ProfileProvider profileProvider = ProfileProvider();
   final ThemeProvider themeProvider = ThemeProvider();
   final VersionProvider versionProvider = VersionProvider();
 
+  // db provider init
+  await databaseProvider.init();
+
+  // 나머지 provider init
   await Future.wait(
     [
-      databaseProvider.init(),
       versionProvider.init(),
       themeProvider.init(),
       profileProvider.init(),

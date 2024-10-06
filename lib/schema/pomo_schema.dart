@@ -1,8 +1,13 @@
+import 'dart:convert';
+
 import 'package:inghub_pomo/classes/sqlite_schema_class.dart';
+import 'package:inghub_pomo/schema/pomo_sequence_schema.dart';
 import 'package:uuid/uuid.dart';
 
 class PomoSchema {
   final String uuid;
+  final PomoSequenceSchema pomoSequence;
+  int pomoIndex;
   String pomoName;
   String profileUuid;
   String? description;
@@ -14,7 +19,9 @@ class PomoSchema {
 
   PomoSchema({
     String? uuid, // uuid는 선택적 파라미터
+    required this.pomoSequence,
     required this.profileUuid,
+    this.pomoIndex = 0,
     required this.created,
     required this.updated,
     this.description,
@@ -25,11 +32,13 @@ class PomoSchema {
   Map<String, dynamic> get toMap {
     return {
       "uuid": uuid,
-      "profileName": profileUuid,
+      "profileUuid": profileUuid,
+      "pomoIndex": pomoIndex,
       "description": description,
       "currentPomo": pomoName,
       "created": created.toIso8601String(), // DateTime을 TEXT로 변환
       "updated": updated.toIso8601String(),
+      "pomoSequence": pomoSequence.toMap,
     };
   }
 
@@ -42,6 +51,9 @@ class PomoSchema {
       description: map["description"],
       created: DateTime.parse(map["created"]), // TEXT를 DateTime으로 변환
       updated: DateTime.parse(map["updated"]),
+      pomoSequence: PomoSequenceSchema.fromMap(
+        jsonDecode(map["pomoSequence"]),
+      ), // JSON을 Map으로 디코딩
     );
   }
 
@@ -55,6 +67,7 @@ class PomoSchema {
           "currentPomo": "TEXT",
           "created": "TEXT NOT NULL",
           "updated": "TEXT NOT NULL",
+          "pomoSequence": "TEXT NOT NULL",
         },
       );
 }

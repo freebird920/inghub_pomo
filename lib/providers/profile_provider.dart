@@ -21,9 +21,9 @@ class ProfileProvider with ChangeNotifier {
     _isLoading = true;
 
     // PreferenceService 초기화 확인
-    if (!_preferenceService.isInitialized) {
-      await _preferenceService.initPrefs();
-    }
+    // if (!_preferenceService.isInitialized) {
+    await _preferenceService.initPrefs();
+    // }
 
     // Theme 데이터 로드
 
