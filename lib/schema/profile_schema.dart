@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:inghub_pomo/classes/sqlite_schema_class.dart';
-import 'package:inghub_pomo/schema/pomo_sequence_schema.dart';
+import 'package:inghub_pomo/schema/pomo_preset_schema.dart';
 import 'package:inghub_pomo/schema/pomo_type_schema.dart';
 import 'package:uuid/uuid.dart';
 
@@ -12,7 +12,7 @@ class ProfileSchema {
   DateTime created; // Flutter에서는 DateTime 사용
   DateTime updated;
   String? currentPomo;
-  PomoSequenceSchema? pomoSequence;
+  PomoPresetSchema? pomoPreset;
 
   // Uuid 인스턴스 생성
   static const Uuid _uuid = Uuid();
@@ -24,7 +24,7 @@ class ProfileSchema {
     required this.updated,
     this.description,
     this.currentPomo,
-    this.pomoSequence,
+    this.pomoPreset,
   }) : uuid = uuid ?? _uuid.v4(); // uuid가 없을 경우 자동 생성
 // 객체를 맵으로 변환
   Map<String, dynamic> get toMap {
@@ -35,8 +35,8 @@ class ProfileSchema {
       "created": created.toIso8601String(), // DateTime을 TEXT로 변환
       "updated": updated.toIso8601String(),
       "currentPomo": currentPomo,
-      "pomoSequence": pomoSequence != null
-          ? jsonEncode(pomoSequence!.toMap)
+      "pomoPreset": pomoPreset != null
+          ? jsonEncode(pomoPreset!.toMap)
           : null, // JSON으로 인코딩
     };
   }
@@ -50,9 +50,9 @@ class ProfileSchema {
       created: DateTime.parse(map["created"]), // TEXT를 DateTime으로 변환
       updated: DateTime.parse(map["updated"]),
       currentPomo: map["currentPomo"],
-      pomoSequence: map["pomoSequence"] != null
-          ? PomoSequenceSchema.fromMap(
-              jsonDecode(map["pomoSequence"])) // JSON을 Map으로 디코딩
+      pomoPreset: map["pomoPreset"] != null
+          ? PomoPresetSchema.fromMap(
+              jsonDecode(map["pomoPreset"])) // JSON을 Map으로 디코딩
           : null,
     );
   }
@@ -67,7 +67,7 @@ class ProfileSchema {
           "created": "TEXT NOT NULL",
           "updated": "TEXT NOT NULL",
           "currentPomo": "TEXT",
-          "pomoSequence": "TEXT",
+          "pomoPreset": "TEXT",
         },
       );
 
@@ -75,28 +75,21 @@ class ProfileSchema {
     String? profileName = "Default Profile",
     String? description =
         "This is a simple example profile. Please edit to your taste.",
+    PomoPresetSchema? pomoPreset,
   }) {
+    pomoPreset ??
+        PomoPresetSchema(
+          uuid: const Uuid().v4(),
+          pomoTypes: <PomoTypeSchema>[],
+        );
     DateTime now = DateTime.now();
-    List<PomoTypeSchema> d = PomoTypeSchema.defaultPomoTypes;
     return ProfileSchema(
       profileName: profileName!,
       description: description,
       created: now,
       updated: now,
       currentPomo: null,
-      pomoSequence: PomoSequenceSchema(
-        uuid: const Uuid().v4(),
-        pomoTypes: [
-          d[0],
-          d[1],
-          d[0],
-          d[1],
-          d[0],
-          d[1],
-          d[0],
-          d[2],
-        ],
-      ),
+      pomoPreset: pomoPreset,
     );
   }
 }

@@ -39,7 +39,7 @@ class SqliteProvider with ChangeNotifier {
     } catch (e) {
       // 에러 처리
       final exception = Exception("Database initialization error: $e");
-      LogService().log("Database initialization error: $e");
+      LogService().log("Database initialization error: ${e.toString()}");
       throw exception;
     } finally {
       _isLoading = false;

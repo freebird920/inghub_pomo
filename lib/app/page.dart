@@ -43,7 +43,9 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(_profileProvider.currentProfileUuid ?? "Home"),
+            Text(_profileProvider.currentProfile?.profileName ?? "없음"),
+            Text(_profileProvider.currentProfile?.updated.toIso8601String() ??
+                "없음"),
           ],
         ),
       ),

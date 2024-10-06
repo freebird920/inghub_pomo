@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'package:inghub_pomo/classes/sqlite_schema_class.dart';
 import 'package:inghub_pomo/schema/pomo_type_schema.dart';
 
-class PomoSequenceSchema {
+class PomoPresetSchema {
   final String uuid;
   final List<PomoTypeSchema> pomoTypes;
 
-  PomoSequenceSchema({
+  PomoPresetSchema({
     required this.uuid,
     required this.pomoTypes,
   });
@@ -33,8 +33,8 @@ class PomoSequenceSchema {
     );
   }
 
-  factory PomoSequenceSchema.fromMap(Map<String, dynamic> map) {
-    return PomoSequenceSchema(
+  factory PomoPresetSchema.fromMap(Map<String, dynamic> map) {
+    return PomoPresetSchema(
       uuid: map["uuid"],
       pomoTypes: (map["pomoTypes"] as List)
           .map((e) => PomoTypeSchema.fromMap(e))

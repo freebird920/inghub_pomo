@@ -1,4 +1,5 @@
-import 'package:inghub_pomo/classes/user_class.dart';
+import 'package:inghub_pomo/classes/result_class.dart';
+import 'package:inghub_pomo/schema/pomo_preset_schema.dart';
 import 'package:inghub_pomo/schema/pomo_type_schema.dart';
 import 'package:inghub_pomo/schema/profile_schema.dart';
 import 'package:inghub_pomo/services/file_service.dart';
@@ -11,6 +12,9 @@ class SqliteService {
   SqliteService._internal();
   static final SqliteService _instance = SqliteService._internal();
   factory SqliteService() => _instance;
+
+  bool _isInitialized = false;
+  bool get isInitialized => _isInitialized;
 
   Database? _sqliteDatabase;
   Database? get sqliteDatabase => _sqliteDatabase;
@@ -42,10 +46,28 @@ class SqliteService {
       );
       LogService().log("Database initialized");
       _sqliteDatabase = database;
+      _isInitialized = true;
       return database;
     } catch (e) {
       LogService().log(e.toString());
       throw Exception(e.toString());
+    }
+  }
+
+  Future<Result<ProfileSchema>> getProfile(String uuid) async {
+    try {
+      final result = await _sqliteDatabase!.query(
+        "profiles",
+        where: "uuid = ?",
+        whereArgs: [uuid],
+      );
+      if (result.isNotEmpty) {
+        return Result(data: ProfileSchema.fromMap(result.first));
+      } else {
+        return Result(error: Exception("Profile not found"));
+      }
+    } catch (e) {
+      return Result(error: Exception(e.toString()));
     }
   }
 
@@ -61,9 +83,31 @@ class SqliteService {
         .execute(ProfileSchema.schema.generateCreateTableSQL()); // 프로필 테이블 생성
     await db.execute(
         PomoTypeSchema.schema.generateCreateTableSQL()); // 포모 타입 테이블 생성
+    await db.execute(
+        PomoPresetSchema.schema.generateCreateTableSQL()); // 포모 프리셋 테이블 생성
 
     // 초기 pomoType 데이터 삽입
-    final defaultPomoTypes = PomoTypeSchema.defaultPomoTypes;
+    final List<PomoTypeSchema> defaultPomoTypes =
+        PomoTypeSchema.defaultPomoTypes;
+
+    final PomoPresetSchema defaultPomoPreset = PomoPresetSchema(
+      uuid: "default",
+      pomoTypes: [
+        defaultPomoTypes[0],
+        defaultPomoTypes[1],
+        defaultPomoTypes[0],
+        defaultPomoTypes[1],
+        defaultPomoTypes[0],
+        defaultPomoTypes[1],
+        defaultPomoTypes[0],
+        defaultPomoTypes[2],
+      ],
+    );
+
+    final defaultProfile = ProfileSchema.generateDefault(
+      pomoPreset: defaultPomoPreset,
+    );
+
     for (final item in defaultPomoTypes) {
       try {
         await db.insert(
@@ -77,14 +121,19 @@ class SqliteService {
     }
 
     // 초기 프로필 데이터 삽입
-    final defaultProfile = ProfileSchema.generateDefault();
+
     try {
+      final pomoPresetResult = await db.insert(
+        "pomoPresets",
+        defaultPomoPreset.toMap,
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
       final defaultProfileResult = await db.insert(
         "profiles",
         defaultProfile.toMap,
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-      if (defaultProfileResult >= 0) {
+      if (defaultProfileResult >= 0 || pomoPresetResult >= 0) {
         LogService().log("Default profile inserted");
         PreferenceService().setPrefString(
           key: "current_profile_uuid",
@@ -94,19 +143,5 @@ class SqliteService {
     } catch (e) {
       LogService().log(e.toString());
     }
-  }
-
-  Future<User> insertUSer(User user) async {
-    // final db = await database;
-    final db = _sqliteDatabase;
-    if (db == null) {
-      throw Exception("Database is not initialized");
-    }
-    db.insert(
-      "users",
-      user.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-    return user;
   }
 }

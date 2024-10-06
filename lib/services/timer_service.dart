@@ -1,5 +1,6 @@
 import 'dart:async';
 
+// TODO 1. TimerService 클래스를 생성합니다.
 class TimerService {
   TimerService._privateConstructor();
   static final TimerService _instance = TimerService._privateConstructor();

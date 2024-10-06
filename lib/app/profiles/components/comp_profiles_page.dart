@@ -141,6 +141,7 @@ class _CompProfilesPageState extends State<CompProfilesPage> {
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(profile.pomoPreset?.pomoTypes.length.toString() ?? ""),
               Text(
                 "uuid: ${profile.uuid}",
                 overflow: TextOverflow.ellipsis,

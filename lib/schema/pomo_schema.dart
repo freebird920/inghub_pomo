@@ -1,12 +1,12 @@
 import 'dart:convert';
 
 import 'package:inghub_pomo/classes/sqlite_schema_class.dart';
-import 'package:inghub_pomo/schema/pomo_sequence_schema.dart';
+import 'package:inghub_pomo/schema/pomo_preset_schema.dart';
 import 'package:uuid/uuid.dart';
 
 class PomoSchema {
   final String uuid;
-  final PomoSequenceSchema pomoSequence;
+  final PomoPresetSchema pomoSequence;
   int pomoIndex;
   String pomoName;
   String profileUuid;
@@ -51,7 +51,7 @@ class PomoSchema {
       description: map["description"],
       created: DateTime.parse(map["created"]), // TEXT를 DateTime으로 변환
       updated: DateTime.parse(map["updated"]),
-      pomoSequence: PomoSequenceSchema.fromMap(
+      pomoSequence: PomoPresetSchema.fromMap(
         jsonDecode(map["pomoSequence"]),
       ), // JSON을 Map으로 디코딩
     );
