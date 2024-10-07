@@ -6,7 +6,7 @@ import 'package:uuid/uuid.dart';
 
 class PomoSchema {
   final String uuid;
-  final PomoPresetSchema pomoSequence;
+  PomoPresetSchema pomoPreset;
   int pomoIndex;
   String pomoName;
   String profileUuid;
@@ -19,7 +19,7 @@ class PomoSchema {
 
   PomoSchema({
     String? uuid, // uuid는 선택적 파라미터
-    required this.pomoSequence,
+    required this.pomoPreset,
     required this.profileUuid,
     this.pomoIndex = 0,
     required this.created,
@@ -38,7 +38,7 @@ class PomoSchema {
       "currentPomo": pomoName,
       "created": created.toIso8601String(), // DateTime을 TEXT로 변환
       "updated": updated.toIso8601String(),
-      "pomoSequence": pomoSequence.toMap,
+      "pomoSequence": pomoPreset.toMap,
     };
   }
 
@@ -51,8 +51,8 @@ class PomoSchema {
       description: map["description"],
       created: DateTime.parse(map["created"]), // TEXT를 DateTime으로 변환
       updated: DateTime.parse(map["updated"]),
-      pomoSequence: PomoPresetSchema.fromMap(
-        jsonDecode(map["pomoSequence"]),
+      pomoPreset: PomoPresetSchema.fromMap(
+        jsonDecode(map["pomoPreset"]),
       ), // JSON을 Map으로 디코딩
     );
   }
