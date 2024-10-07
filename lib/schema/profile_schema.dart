@@ -32,12 +32,10 @@ class ProfileSchema {
       "uuid": uuid,
       "profileName": profileName,
       "description": description,
-      "created": created.toIso8601String(), // DateTime을 TEXT로 변환
+      "created": created.toIso8601String(),
       "updated": updated.toIso8601String(),
       "currentPomo": currentPomo,
-      "pomoPreset": pomoPreset != null
-          ? jsonEncode(pomoPreset!.toMap)
-          : null, // JSON으로 인코딩
+      "pomoPreset": pomoPreset?.toJson,
     };
   }
 

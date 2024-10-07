@@ -124,7 +124,7 @@ class SqliteService {
 
     try {
       final pomoPresetResult = await db.insert(
-        "pomoPresets",
+        "pomo_presets",
         defaultPomoPreset.toMap,
         conflictAlgorithm: ConflictAlgorithm.replace,
       );

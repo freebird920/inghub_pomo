@@ -44,8 +44,15 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(_profileProvider.currentProfile?.profileName ?? "없음"),
-            Text(_profileProvider.currentProfile?.updated.toIso8601String() ??
-                "없음"),
+            Text(
+              _profileProvider.currentProfile?.updated.toIso8601String() ??
+                  "없음",
+            ),
+            // pomoTypes 리스트가 null이 아닐 경우에만 추가
+            if (_profileProvider.currentProfile?.pomoPreset?.pomoTypes != null)
+              ..._profileProvider.currentProfile!.pomoPreset!.pomoTypes.map(
+                (element) => Text(element.typeName),
+              ),
           ],
         ),
       ),

@@ -12,38 +12,29 @@ class PomoPresetSchema {
     required this.pomoTypes,
   });
 
+  // pomoTypes를 JSON 문자열로 변환하여 저장
   Map<String, dynamic> get toMap {
     return {
       "uuid": uuid,
-      "pomoTypes": pomoTypes
-          .map(
-            (e) => e.toMap,
-          )
-          .toList(),
+      "pomoTypes": jsonEncode(pomoTypes.map((e) => e.toMap).toList()),
     };
   }
 
   String get toJson {
-    return jsonEncode(
-      pomoTypes
-          .map(
-            (PomoTypeSchema e) => e.toMap,
-          )
-          .toList(),
-    );
+    return jsonEncode(toMap);
   }
 
   factory PomoPresetSchema.fromMap(Map<String, dynamic> map) {
     return PomoPresetSchema(
       uuid: map["uuid"],
-      pomoTypes: (map["pomoTypes"] as List)
+      pomoTypes: (jsonDecode(map["pomoTypes"]) as List)
           .map((e) => PomoTypeSchema.fromMap(e))
           .toList(),
     );
   }
 
   static SqliteSchema get schema => SqliteSchema(
-        tableName: "pomo_sequences",
+        tableName: "pomo_presets",
         fields: {
           "uuid": "TEXT PRIMARY KEY",
           "pomoTypes": "TEXT NOT NULL",
