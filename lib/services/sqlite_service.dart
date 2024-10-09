@@ -30,8 +30,9 @@ class SqliteService {
   Future<Database> initDB() async {
     try {
       sqfliteFfiInit();
-      final databaseFactory = databaseFactoryFfi;
+      databaseFactory = databaseFactoryFfi;
       FileService fileService = FileService();
+      // print(await getDatabasesPath());
       final localPathResult = await fileService.getLocalPath;
       if (localPathResult.error != null) {
         throw Exception(localPathResult.error);
